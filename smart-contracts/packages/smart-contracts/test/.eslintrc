@@ -1,0 +1,10 @@
+{
+  "env": {
+    "mocha": true
+  },
+  "globals": {
+    "contract": true,
+    "artifacts": true,
+    "assert": true
+  }
+}

@@ -1,0 +1,27 @@
+{
+  "name": "common-deps",
+  "version": "0.0.0",
+  "private": true,
+  "description": "DIT Voting Project common development deps",
+  "devDependencies": {
+    "@babel/core": "7.4.4",
+    "@babel/preset-env": "7.4.4",
+    "@babel/runtime": "7.4.4",
+    "chai": "4.2.0",
+    "chai-as-promised": "7.1.1",
+    "choma": "1.2.1",
+    "eslint": "5.16.0",
+    "eslint-config-airbnb-base": "13.1.0",
+    "eslint-plugin-import": "2.17.2",
+    "mocha": "6.1.4",
+    "nyc": "14.1.1",
+    "rollup-plugin-babel": "4.3.2",
+    "rollup-plugin-commonjs": "9.3.4",
+    "rollup-plugin-istanbul": "2.0.1",
+    "rollup-plugin-json": "4.0.0",
+    "rollup-plugin-node-builtins": "2.1.2",
+    "rollup-plugin-node-globals": "1.4.0",
+    "rollup-plugin-node-resolve": "4.2.4",
+    "rollup-plugin-terser": "4.0.4"
+  }
+}

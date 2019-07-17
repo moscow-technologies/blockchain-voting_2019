@@ -1,0 +1,5 @@
+--timeout 60000
+--slow 30000
+--ui bdd
+--require choma
+--color

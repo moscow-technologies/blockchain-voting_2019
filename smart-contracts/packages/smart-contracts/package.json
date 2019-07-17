@@ -1,0 +1,22 @@
+{
+  "name": "smart-contracts",
+  "version": "0.0.0",
+  "private": true,
+  "description": "DIT Voting Smart-Contracts",
+  "main": "index.js",
+  "scripts": {
+    "test": "truffle test",
+    "cover": "solidity-coverage",
+    "compile": "truffle compile && find ./build -name '*.json' -exec ./etc/filter_json.sh {} \\;",
+    "lint": "eslint test/**/*.js *.js && solhint contracts/*.sol && solium -d contracts/"
+  },
+  "devDependencies": {
+    "common-deps": "0.0.0",
+    "crypto-lib": "0.0.0",
+    "solhint": "2.0.0",
+    "solidity-coverage": "0.5.11",
+    "solium": "1.2.4",
+    "truffle": "5.0.17",
+    "truffle-assertions": "0.8.2"
+  }
+}

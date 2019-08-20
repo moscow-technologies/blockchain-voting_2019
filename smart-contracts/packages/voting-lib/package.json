@@ -10,7 +10,8 @@
   "dependencies": {
     "ethers": "4.0.27",
     "smart-contracts": "0.0.0",
-    "crypto-lib": "0.0.0"
+    "crypto-lib": "0.0.0",
+    "jsbn": "1.1.0"
   },
   "devDependencies": {
     "common-deps": "0.0.0"

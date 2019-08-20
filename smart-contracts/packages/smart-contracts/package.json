@@ -13,6 +13,7 @@
   "devDependencies": {
     "common-deps": "0.0.0",
     "crypto-lib": "0.0.0",
+    "jsbn": "1.1.0",
     "solhint": "2.0.0",
     "solidity-coverage": "0.5.11",
     "solium": "1.2.4",

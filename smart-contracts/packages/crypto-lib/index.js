@@ -1,9 +1,9 @@
 const ElGamal = require('./src/elGamal');
 const ElGamalPartitioner = require('./src/elGamalPartitioner');
-const MultiLevelEncryptor = require('./src/multiLevelEncryptor');
+const utils = require('./src/utils');
 
 module.exports = {
   ElGamal,
   ElGamalPartitioner,
-  MultiLevelEncryptor,
+  utils,
 };

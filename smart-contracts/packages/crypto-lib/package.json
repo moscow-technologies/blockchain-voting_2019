@@ -6,7 +6,8 @@
   "main": "index.js",
   "scripts": {
     "lint": "eslint test/*.js src/*.js samples/*.js *.js",
-    "test": "nyc --reporter html mocha"
+    "test": "mocha",
+    "coverage": "nyc --reporter html mocha"
   },
   "dependencies": {
     "jsbn": "1.1.0",

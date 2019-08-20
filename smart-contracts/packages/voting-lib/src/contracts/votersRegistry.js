@@ -71,7 +71,7 @@ class VotersRegistry extends Ownable {
   }
 
   /**
-   * Returns parsed events from trabsaction receipt
+   * Returns parsed events from transaction receipt
    * @param {Object} txReceipt - transaction receipt. Tx should be sent to this contract
    * @return {Object[]} - array of events in this transaction
    */

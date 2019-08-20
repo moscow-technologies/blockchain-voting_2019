@@ -2,8 +2,8 @@
 const randomBytes = require('randombytes');
 const { BigInteger: BigInt } = require('jsbn');
 
-const BIG_TWO = new BigInt('2');
-const SOLIDITY_MAX_INT = BIG_TWO.pow('256').subtract(BigInt.ONE);
+const KEY_BIT_LENGTH = 1024;
+const CRYPTO_MAX_INT = BigInt.ONE.shiftLeft(KEY_BIT_LENGTH + 1).subtract(BigInt.ONE);
 
 // Helper functions
 
@@ -20,20 +20,7 @@ const trimBigInt = (bigInt, bits) => {
   return trimLength > 0 ? bigInt.shiftRight(trimLength) : bigInt;
 };
 
-/**
- * @returns {Promise<BigInt>}
- */
-const getRandomNbitBigInt = async (bits) => {
-  // Generate random bytes with the length of the range
-  const randomBigInt = new BigInt(randomBytesHex(bits), 16);
-
-  // Trim the result and then ensure that the highest bit is set
-  return trimBigInt(randomBigInt, bits)
-    .setBit(bits - 1)
-    .or(BigInt.ONE);
-};
-
-// Exported functions
+// exported functions
 
 /**
  * @returns {Promise<BigInt>}
@@ -47,8 +34,11 @@ const getRandomBigInt = async (min, max) => {
     throw new Error('Min value can not be more or equal Max value!');
   }
 
-  if (max.compareTo(SOLIDITY_MAX_INT) > 0) {
-    throw new Error('Can not generate BigInt bigger than Solidity uint256 max value!');
+  if (max.compareTo(CRYPTO_MAX_INT) > 0) {
+    console.log(`max: ${max.toString()}`);
+    console.log(`crypto: ${CRYPTO_MAX_INT.toString()}`);
+    console.log(`compare: ${max.compareTo(CRYPTO_MAX_INT)}`);
+    throw new Error('Can not generate BigInt bigger than crypto max value!');
   }
 
   const rangeBitLength = max
@@ -64,20 +54,7 @@ const getRandomBigInt = async (min, max) => {
   return randomBigInt;
 };
 
-/**
- * @returns {Promise<BigInt>}
- */
-const getRandomBigPrime = async (bits = 256, millerRabinPasses = 100000) => {
-  let randomBigInt = await getRandomNbitBigInt(bits);
-
-  while (!randomBigInt.isProbablePrime(millerRabinPasses)) {
-    randomBigInt = randomBigInt.add(BIG_TWO);
-  }
-
-  return trimBigInt(randomBigInt, bits).setBit(bits - 1);
-};
-
-const randomValidBigInt = () => getRandomBigInt(BigInt.ONE, SOLIDITY_MAX_INT);
+const randomValidBigInt = () => getRandomBigInt(BigInt.ONE, CRYPTO_MAX_INT);
 
 const checkEveryFieldIsSame = (objects, fieldName) => {
   const isSame = objects.map(obj => obj[fieldName]).every((val, i, arr) => val === arr[0]);
@@ -90,10 +67,10 @@ const checkEveryFieldIsSame = (objects, fieldName) => {
 };
 
 module.exports = {
-  BIG_TWO,
-  SOLIDITY_MAX_INT,
+  CRYPTO_MAX_INT,
+  KEY_BIT_LENGTH,
+
   getRandomBigInt,
-  getRandomBigPrime,
   randomValidBigInt,
   checkEveryFieldIsSame,
   trimBigInt,

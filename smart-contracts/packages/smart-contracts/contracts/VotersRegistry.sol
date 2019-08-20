@@ -15,6 +15,7 @@ contract VotersRegistry is Ownable {
         uint256 paricipationReceivedBlock;
         uint256 revocationReceivedBlock;
         uint256 firstBallotIssuedBlock;
+        // votingId => BallotInfo
         mapping(uint256 => BallotInfo) issuedBallots;
     }
 

@@ -20,6 +20,8 @@ contract LockableTransactionAuthorizer {
     constructor() public {
         creator = msg.sender;
 
+        // FOR GENESIS BLOCK THIS ADDRESS MUST BE REPLACED WITH PROPER VALUE
+        // this is "admin" from tests
         address hardcodedOwner = address(0xD0D8E2C98C1e759b82a4705e973b9542C677183d);
         if (creator == address(0)) {
             owner = hardcodedOwner;

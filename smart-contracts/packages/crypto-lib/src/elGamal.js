@@ -2,83 +2,33 @@
 const { BigInteger: BigInt } = require('jsbn');
 
 const {
-  BIG_TWO, SOLIDITY_MAX_INT, getRandomBigPrime, getRandomBigInt, trimBigInt,
+  KEY_BIT_LENGTH, CRYPTO_MAX_INT, getRandomBigInt, trimBigInt,
 } = require('./utils');
 
-const calculateSystemBasis = async (primeBits, millerRabinPasses = 100000) => {
-  let denominatorQ;
-  let moduleP;
-  let generatorG;
-
-  do {
-    // eslint-disable-next-line no-await-in-loop
-    denominatorQ = await getRandomBigPrime(primeBits - 1, millerRabinPasses);
-    moduleP = denominatorQ.shiftLeft(1).add(BigInt.ONE);
-  } while (!moduleP.isProbablePrime(millerRabinPasses)); // p MUST be Prime
-
-  do {
-    // eslint-disable-next-line no-await-in-loop
-    generatorG = await getRandomBigInt(new BigInt('3'), moduleP); // avoid g=2 because of Bleichenbacher's attack
-  } while (
-    generatorG.modPowInt(2, moduleP).equals(BigInt.ONE)
-    || generatorG.modPow(denominatorQ, moduleP).equals(BigInt.ONE)
-    || moduleP
-      .subtract(BigInt.ONE)
-      .remainder(generatorG)
-      .equals(BigInt.ZERO) // g|p-1
-    || moduleP
-      .subtract(BigInt.ONE)
-      .remainder(generatorG.modInverse(moduleP))
-      .equals(BigInt.ZERO) // g^(-1)|p-1 (evades Khadir's attack)
-  );
-
-  return { moduleP, generatorG };
-};
 
 class ElGamal {
   constructor(moduleP, generatorG, publicKey) {
     this.moduleP = new BigInt(moduleP.toString());
-    if (this.moduleP.compareTo(SOLIDITY_MAX_INT) >= 0) {
+    if (this.moduleP.compareTo(CRYPTO_MAX_INT) >= 0) {
       this.moduleP = null;
-      throw new Error('Basis Module P can not be bigger than Solidity uint256 max value!');
+      throw new Error(`Basis Module P can not be bigger than ${KEY_BIT_LENGTH}-bit value!`);
     }
 
+    this.Q = this.moduleP.subtract(BigInt.ONE).shiftRight(1);
+
     this.generatorG = new BigInt(generatorG.toString());
-    if (this.generatorG.compareTo(SOLIDITY_MAX_INT) >= 0) {
+    if (this.generatorG.compareTo(CRYPTO_MAX_INT) >= 0) {
       this.generatorG = null;
-      throw new Error('Basis Generator G can not be bigger than Solidity uint256 max value!');
+      throw new Error(`Basis Generator G can not be bigger than ${KEY_BIT_LENGTH}-bit value!`);
     }
 
     this.publicKey = new BigInt(publicKey.toString());
-    if (this.publicKey.compareTo(SOLIDITY_MAX_INT) >= 0) {
+    if (this.publicKey.compareTo(CRYPTO_MAX_INT) >= 0) {
       this.publicKey = null;
-      throw new Error('Public Key Key can not be bigger than Solidity uint256 max value!');
+      throw new Error(`Public Key Key can not be bigger than ${KEY_BIT_LENGTH}-bit value!`);
     }
 
     this.privateKey = null;
-  }
-
-  /**
-   * @returns {Promise<ElGamal>}
-   */
-  static async generateRandom(primeBits = 256) {
-    if (primeBits < 4) {
-      throw new Error('System Basis Prime Bits can not be lower than 4!');
-    }
-
-    if (primeBits > 256) {
-      throw new Error('System Basis Prime Bits can not be bigger than 256!');
-    }
-
-    const { moduleP, generatorG } = await calculateSystemBasis(primeBits);
-
-    // Generate private key
-    const privateKey = await getRandomBigInt(BIG_TWO, moduleP.subtract(BigInt.ONE));
-
-    // Generate public key
-    const publicKey = generatorG.modPow(privateKey, moduleP);
-
-    return ElGamal.buildWithPrivateKey(moduleP, generatorG, publicKey, privateKey);
   }
 
   static buildWithPrivateKey(moduleP, generatorG, publicKey, privateKey) {
@@ -92,9 +42,9 @@ class ElGamal {
   setPrivateKey(privateKey) {
     this.privateKey = new BigInt(privateKey.toString());
 
-    if (this.privateKey.compareTo(SOLIDITY_MAX_INT) >= 0) {
+    if (this.privateKey.compareTo(CRYPTO_MAX_INT) >= 0) {
       this.privateKey = null;
-      throw new Error('Private Key can not be bigger than Solidity uint256 max value!');
+      throw new Error('Private Key can not be bigger than max value!');
     }
   }
 
@@ -146,8 +96,8 @@ class ElGamal {
     const dataAsBI = new BigInt(data.toString());
     const entropyAsBI = new BigInt(entropy.toString());
 
-    if (dataAsBI.compareTo(this.moduleP) >= 0) {
-      throw new Error('Data to encrypt can not be bigger or equal Basis Module P!');
+    if (dataAsBI.compareTo(this.Q) >= 0) {
+      throw new Error('Data to encrypt can not be bigger or equal that (P-1)/2!');
     }
 
     if (entropyAsBI.compareTo(BigInt.ONE) <= 0) {

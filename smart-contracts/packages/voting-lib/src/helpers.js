@@ -1,4 +1,5 @@
 const ethers = require('ethers');
+const { BigInteger: BigInt } = require('jsbn');
 
 /**
  *
@@ -52,4 +53,46 @@ const txReceiptParseLogs = (txReceipt, contract) => {
   });
 };
 
-module.exports = { txReceiptParseLogs };
+/**
+ * Parses raw transaction & returns its properties
+ * See https://docs.ethers.io/ethers.js/html/api-utils.html#transactions
+ * @param {String} rawTx - raw transaction data
+ * @return {Object} - transaction properties (from, to, data, hash, etc.)
+ */
+const parseRawTransaction = rawTx => ethers.utils.parseTransaction(rawTx);
+
+/**
+* Strips 0x from hex sequence if present
+* @param {string} hex - hex sequence
+* @return {string} - hex sequence without 0x
+*/
+const cleanHex = (hex) => { // eslint-disable-line arrow-body-style
+  return (typeof hex === 'string' && hex.slice(0, 2) === '0x') ? hex.slice(2) : hex; // eslint-disable-line no-extra-parens
+};
+
+/**
+ * Converts BigInteger number to bytes representaion
+ * @param {Object} bigint - BigInteger
+ * @return {string} - bytes representaion of number
+ */
+const bigIntToBytes = (bigint) => {
+  const hex = cleanHex(bigint.toString(16));
+  // eslint-disable-next-line prefer-template
+  return '0x' + (((hex.length % 64) !== 0) ? '0'.repeat(64 - (hex.length % 64)) : '') + hex;
+};
+
+/**
+ * Converts bytes representaion to BigInteger
+ * @param {string} - bytes representaion of number
+ * @return {Object} bigint - BigInteger
+ */
+const bytesToBigInt = (bytes) => { // eslint-disable-line arrow-body-style
+  return new BigInt(cleanHex(bytes), 16);
+};
+
+module.exports = {
+  txReceiptParseLogs,
+  parseRawTransaction,
+  bigIntToBytes,
+  bytesToBigInt,
+};

@@ -16,21 +16,34 @@ class MgikMgd2019 extends FormMgik
 
     protected $form_id = 'mgd2019';
     protected $reg_form_id = 'mgd2019';
-    protected $form_name = 'Включение в список избирателей для электронного дистанционного голосования на выборах депутатов Московской городской Думы';
-    protected $service_target_title = 'Включение в список избирателей для электронного дистанционного голосования на выборах депутатов Московской городской Думы';
+    protected $form_name = 'Включение в список избирателей для электронного дистанционного голосования на выборах депутатов Московской городской Думы седьмого созыва';
+    protected $service_target_title = 'Включение в список избирателей для электронного дистанционного голосования на выборах депутатов Московской городской Думы седьмого созыва';
     protected $extra_status_send = true;
 
     public function onShowInList(&$appInfo, $throughSoapService = false) {
         parent::onShowInList($appInfo);
 
-        if (isset($appInfo['STATUS_CODE']) && ($appInfo['STATUS_CODE'] == '1075')){
+        $statusCode = $appInfo['STATUS_CODE'] ?? null;
+
+        if ($statusCode == '1075') {
             $appInfo['ACTIONS'][] = [
+                'type' => 'link',
                 'data' => [
                     'url' => "{$this->mainHost}/ru/application/{$this->org_id}/mgd-golosovanie/",
-                    'text' => 'Голосовать',
+                    'text' => 'Проголосовать',
                     'btn_class' => self::ELK_BTN_GREEN_CLASS
                 ],
-                'type' => 'link'
+            ];
+        }
+
+        if ($statusCode == '1077.1') {
+            $appInfo['ACTIONS'][] = [
+                'type' => 'link',
+                'data' => [
+                    'url' => "{$this->mainHost}/ru/service/mgd-election",
+                    'text' => 'Перейти к тестовому голосованию',
+                    'btn_class' => self::ELK_BTN_GREEN_CLASS
+                ],
             ];
         }
     }

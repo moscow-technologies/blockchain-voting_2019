@@ -2,8 +2,6 @@
 
 namespace Mgd\Module\election;
 
-use TaskManager;
-
 /**
  * Запрос отправки результаов голосования
  */

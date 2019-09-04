@@ -18,6 +18,6 @@ class LogicException extends \Exception
 
     public function getData()
     {
-        return $this->data;
+        return array_merge($this->data,array('sess-id'=>session_id(),'referer'=>$_SERVER['HTTP_REFERER']));
     }
 }

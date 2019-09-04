@@ -13,9 +13,12 @@ abstract class TaskRequest
 
     /** @var array  */
     public $client;
-    
+
     /** @var array  */
     public $fields;
+
+    /** @var array */
+    protected $profile;
 
     /** @var array */
     protected $config;
@@ -35,6 +38,14 @@ abstract class TaskRequest
         $this->fields = $fields;
 
         $this->config = PoolConfig::me()->conf('Mgik')->get('amqp');
+    }
+
+    /**
+     * @param array $profile
+     */
+    public function setProfile(array $profile = [])
+    {
+        $this->profile = $profile;
     }
 
     /**
@@ -69,7 +80,6 @@ abstract class TaskRequest
 
     /**
      * Добавляет задачу в TaskManager
-     * @throws \LogicException
      * @return void
      */
     public function addQueueTask()
@@ -99,16 +109,28 @@ abstract class TaskRequest
     }
 
     /**
+     * @param string $name
+     * @param mixed $default
+     * @return mixed
+     */
+    protected function field($name, $default = null)
+    {
+        $value = $this->fields[$name] ?? null;
+
+        return $value ? $value : $default;
+    }
+
+    /**
      * @param string $date Дата
      * @param string $format Формат даты. По умолчанию 'd.m.Y'
-     * @return string Дата в формате 'Y-m-d H:i:s.000'
+     * @return string|null Дата в формате 'Y-m-d H:i:s.000'
      */
     protected function formatAsDate($date = '', $format = 'd.m.Y')
     {
         $dt = \DateTime::createFromFormat($format, $date);
 
         if (! $dt) {
-            return '';
+            return null;
         }
 
         if (str_replace(['H', 'i', 's'], '', $format) === $format) {
@@ -120,29 +142,35 @@ abstract class TaskRequest
 
     /**
      * @param $string
-     * @return string
+     * @return string|null
      */
     protected function formatAsNumber($string = '')
     {
-        return preg_replace('/[^0-9]/', '', $string);
+        $result = preg_replace('/[^0-9]/', '', $string);
+
+        return $result ? $result : null;
     }
 
     /**
      * @param string $serial_number
-     * @return string
+     * @return string|null
      */
     protected function formatAsPassportSerial($serial_number = '')
     {
-        return substr($this->formatAsNumber($serial_number), 0, 4);
+        $result = substr($this->formatAsNumber($serial_number), 0, 4);
+
+        return $result ? $result : null;
     }
 
     /**
      * @param string $serial_number
-     * @return string
+     * @return string|null
      */
     protected function formatAsPassportNumber($serial_number = '')
     {
-        return substr($this->formatAsNumber($serial_number), 4, 6);
+        $result = substr($this->formatAsNumber($serial_number), 4, 6);
+
+        return $result ? $result : null;
     }
 
 }

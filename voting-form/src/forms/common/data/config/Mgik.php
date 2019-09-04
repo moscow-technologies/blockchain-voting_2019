@@ -3,12 +3,20 @@
 return [
     'debug' => true,
     'registration' => [
-        'start_date' => 20190626000000,
+        'start_date' => 20190724000000,
         'period' => 24,
         'statuses' => [
-            'allow' => [],
-            'disallow' => [],
+            'allow' => [101099, 102099, 1080, 1090],
+            'disallow' => [1080, 1090]
         ],
+        'profile_validators' => [
+            'age' => true,
+            'isConfirmed' => true,
+            'gender' => true,
+            'passport' => true,
+            'regAddress' => true,
+            'district' => true,
+        ]
     ],
     'allowed_districts' => [
         1005 => "муниципальный округ Крюково",
@@ -31,6 +39,9 @@ return [
                 'flush' => "http://example.ru",
             ],
         ],
+        'deputies' => [
+            'url' => "http://example.ru"
+        ],
         'election' => [
             'host' => 'http://example.ru',
             'cert' => 'example-cert',
@@ -41,7 +52,16 @@ return [
             'url' => [
                 'get' => "http://example.ru",
             ]
-        ]
+        ],
+        'decrypt' => [
+            'login' => 'example-login',
+            'password' => 'example-password',
+            'token' => 'example-token',
+            'url' => [
+                'decrypt' => 'http://example.ru',
+            ]
+        ],
+        'security' => 'http://example.ru',
     ],
     'amqp' => [
         'host' => 'http://example.ru',

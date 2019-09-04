@@ -1,8 +1,6 @@
 $(document).ready(function () {
 
-    if (! $.checkBrowser()) {
-        $('#form_element').html( OPR.templater('old_browser_content', []) );
-    }
+    $.checkBrowser({target: '#form_element'});
 
     var confirmPopupContent = OPR.templater('vote_start_confirm', []);
     var sendingPopupContent = OPR.templater('sending_popup', []);
@@ -25,8 +23,7 @@ $(document).ready(function () {
 
         $target.data({
             oldValue: '',
-            confirmText: 'Пароль для подтверждения участия в голосовании: {code}. Никому не сообщайте пароль.',
-            successText: 'Телефон успешно подтвержден.',
+            confirmText: 'Телефон успешно подтвержден.',
             confirmCallback: function () {
                 $('.vote-block').fadeIn('fast');
             }

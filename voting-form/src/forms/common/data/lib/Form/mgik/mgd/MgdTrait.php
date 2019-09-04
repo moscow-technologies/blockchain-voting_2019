@@ -6,7 +6,12 @@ use db;
 use params;
 use Itb\Mpgu\Lib\Config\PoolConfig;
 use Itb\Mpgu\Lib\ProfileLk;
+use Itb\Mpgu\Form\mgik\mgd\LogicException;
 
+/**
+ * @property array $client
+ * @property array $logData
+ */
 trait MgdTrait
 {
     /** @var array */
@@ -24,18 +29,22 @@ trait MgdTrait
     /**
      * @param $smarty
      */
-    public function __construct($smarty) {
+    public function __construct($smarty)
+    {
         parent::__construct($smarty);
 
         params::$params['services']['mostiser']['on'] = false;
         params::$params['services']['banner']['on'] = false;
         params::$params['services']['mos_ru']['widgetLive'] = false;
+        params::$params['services']['elk']['elk_block_always'] = true;
         $this->download_app_file_enabled = false;
 
         $this->_config = PoolConfig::me()->conf('Mgik');
         $this->_allowed_districts = $this->_config->get('allowed_districts');
 
-        $this->getRevocation()->enableRevocation([], ['1077']);
+        $this->getRevocation()->enableRevocation([], ['1077', '1077.2']);
+
+        $this->registerAjaxModule('mgd', new MgdAjaxHandler());
     }
 
     protected function show()
@@ -53,12 +62,19 @@ trait MgdTrait
             $this->validateProfile();
 
             if ($this->_profile_errors) {
+                $this->logError('Ошибка проверки профиля', [
+                    'errors' => $this->_profile_errors,
+                    'profile' => $this->_profile,
+                ], $this->getProfileErrorsExtraData());
+
                 $this->smarty->assign('hide_cutalog_button', true);
                 $this->smarty->assign('profile_errors', $this->_profile_errors);
+                $this->smarty->assign('profile_validators', $this->_config->get('registration/profile_validators'));
 
                 return $this->getTplPath('error_profile.tpl');
             }
 
+            $this->smarty->assign('security_js', $this->_config->get('service/security'));
             $this->smarty->assign('profile', [
                 'flat' => $this->_profile['REG_ADDRESS']['FLAT'] ?? null,
                 'unad' => $this->_profile['REG_ADDRESS']['UNAD'] ?? null,
@@ -68,7 +84,9 @@ trait MgdTrait
 
             return parent::show();
 
-        } catch (\LogicException $e) {
+        } catch (LogicException $e) {
+            $this->logError($e->getMessage(), $e->getData());
+
             $this->smarty->assign('hide_cutalog_button', true);
             $this->smarty->assign('error_title', 'Произошла ошибка.');
             $this->smarty->assign('message', $e->getMessage());
@@ -76,6 +94,8 @@ trait MgdTrait
             return $this->getTplPath('error_exception.tpl');
 
         } catch (\Exception $e) {
+            $this->logError('Произошла неизвестная ошибка.', $e->getMessage() . "\n" . $e->getTraceAsString());
+
             $this->smarty->assign('hide_cutalog_button', true);
             $this->smarty->assign('error_title', 'Произошла ошибка.');
             $this->smarty->assign('message', 'Произошла неизвестная ошибка.');
@@ -94,6 +114,7 @@ trait MgdTrait
         // Отправка заявления на регистрацию
         if (! isset($_POST['revocation'])) {
             $request = new TaskRegistrationRequest($this->client, $this->fields, $this->app);
+            $request->setProfile($this->_profile);
             $request->addQueueTask();
 
             return true;
@@ -165,7 +186,8 @@ trait MgdTrait
      * Успешное заявление можно подать только 1 раз,
      * повторное заявление можно подавать 1 раз в 24 часа.
      * @return bool
-     * @throws \LogicException|\Exception
+     * @throws LogicException
+     * @throws \Exception
      */
     protected function validateSubmittedApps()
     {
@@ -194,7 +216,11 @@ trait MgdTrait
 
         foreach ($apps as $app) {
             if ($statuses['allow'] && ! in_array($app['STATUS_CODE'], $statuses['allow'])) {
-                throw new \LogicException('У Вас уже есть поданное завление. Повторная отправка заявления не возможна.');
+                throw new LogicException('У Вас уже есть поданное завление. Повторная отправка заявления не возможна.' , [
+                    'params' => $params,
+                    'app' => $app,
+                    'statuses' => $statuses['allow'],
+                ]);
             }
 
             if (in_array($app['STATUS_CODE'], $statuses['disallow'])) {
@@ -206,7 +232,15 @@ trait MgdTrait
                 $diffInHours = $diff->h + ($diff->days * 24);
 
                 if ($diffInHours < $allowPeriod) {
-                    throw new \LogicException('Периодичность подачи и отзыва заявления ограничена одним заявлением в сутки. Попробуйте повторить запрос позднее.');
+                    throw new LogicException('Периодичность подачи и отзыва заявления ограничена одним заявлением в сутки. Попробуйте повторить запрос позднее.', [
+                        'params' => $params,
+                        'app' => $app,
+                        'statuses' => $statuses['disallow'],
+                        'allowPeriod' => $allowPeriod,
+                        'nowDatetime' => $nowDatetime->format('d.m.y H:i:s'),
+                        'appDatetime' => $appDatetime->format('d.m.y H:i:s'),
+                        'diff' => $diffInHours,
+                    ]);
                 }
             }
         }
@@ -216,7 +250,7 @@ trait MgdTrait
 
     /**
      * @return bool
-     * @throws \LogicException
+     * @throws LogicException
      */
     protected function getProfile()
     {
@@ -225,7 +259,11 @@ trait MgdTrait
         $this->_profile = $profile;
 
         if (200 !== $code) {
-            throw new \LogicException('Не удалось получить данные пользователя из Личного кабинета.');
+            throw new LogicException('Не удалось получить данные пользователя из Личного кабинета.', [
+                'code' => $code,
+                'sudir_id' => $this->client['SUDIR_ID'],
+                'profile' => $profile,
+            ]);
         }
 
         return true;
@@ -233,26 +271,38 @@ trait MgdTrait
 
     /**
      * @throws \Exception
-     * @return void
+     * @return bool
      */
     protected function validateProfile()
     {
-        $this->validateProfileAge();
-        $this->validateProfileIsConfirmed();
-        $this->validateProfilePassport();
-        $this->validateProfileRegAddress();
-        $this->validateProfileDistrict();
+        $validators = $this->_config->get('registration/profile_validators');
+        $result = true;
+
+        if (! $validators) {
+            return $result;
+        }
+
+        foreach ($validators as $validator => $isEnable) {
+            $method = 'validateProfile' . ucfirst($validator);
+
+            if ($isEnable && method_exists($this, $method)) {
+                $result = call_user_func_array([$this, $method], [$validator]) && $result;
+            }
+        }
+
+        return $result;
     }
 
     /**
      * Валидация возраста
+     * @param string $field
      * @return bool
      * @throws \Exception
      */
-    protected function validateProfileAge()
+    protected function validateProfileAge(string $field)
     {
         if (! isset($this->_profile['PERSON']['BIRTHDATE'])) {
-            $this->_profile_errors['PERSON']['BIRTHDATE'] = false;
+            $this->_profile_errors[$field] = false;
 
             return false;
         }
@@ -261,7 +311,7 @@ trait MgdTrait
         $birthday = \DateTime::createFromFormat('d.m.Y',  $this->_profile['PERSON']['BIRTHDATE'], $tz);
 
         if (! $birthday) {
-            $this->_profile_errors['PERSON']['BIRTHDATE'] = false;
+            $this->_profile_errors[$field] = false;
 
             return false;
         }
@@ -272,7 +322,7 @@ trait MgdTrait
             ->setTime(0, 0, 0);
 
         if (self::MIN_AGE > $target->diff($birthday)->y) {
-            $this->_profile_errors['PERSON']['BIRTHDATE'] = false;
+            $this->_profile_errors[$field] = false;
 
             return false;
         }
@@ -282,12 +332,32 @@ trait MgdTrait
 
     /**
      * Валидация признака подтверждения в МФЦ
+     * @param string $field
      * @return bool
      */
-    protected function validateProfileIsConfirmed()
+    protected function validateProfileIsConfirmed(string $field)
     {
         if (! isset($this->_profile['REG_DATA']['IS_CONFIRMED_OFFLINE']) || $this->_profile['REG_DATA']['IS_CONFIRMED_OFFLINE'] !== 'true') {
-            $this->_profile_errors['REG_DATA']['IS_CONFIRMED_OFFLINE'] = false;
+            $this->_profile_errors[$field] = false;
+
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * Валидация пола
+     * @param string $field
+     * @return bool
+     */
+    protected function validateProfileGender(string $field)
+    {
+        $gender = $this->_profile['PERSON']['GENDER'] ?? null;
+        $genders = ['m', 'f'];
+
+        if (! $gender || ! in_array(mb_strtolower($gender), $genders)) {
+            $this->_profile_errors[$field] = false;
 
             return false;
         }
@@ -297,18 +367,19 @@ trait MgdTrait
 
     /**
      * Валидация паспорта
+     * @param string $field
      * @return bool
      */
-    protected function validateProfilePassport()
+    protected function validateProfilePassport(string $field)
     {
         if (! isset($this->_profile['PASSPORT_RF']['NUMBER']) || ! $this->_profile['PASSPORT_RF']['NUMBER']) {
-            $this->_profile_errors['PASSPORT_RF']['NUMBER'] = false;
+            $this->_profile_errors[$field] = false;
 
             return false;
         }
 
         if (! isset($this->_profile['PASSPORT_RF']['VERIFY_DATE']) || ! $this->_profile['PASSPORT_RF']['VERIFY_DATE']) {
-            $this->_profile_errors['PASSPORT_RF']['VERIFY_DATE'] = false;
+            $this->_profile_errors[$field] = false;
 
             return false;
         }
@@ -318,31 +389,45 @@ trait MgdTrait
 
     /**
      * Валидация адреса регистрации
+     * @param string $field
      * @return bool
      */
-    protected function validateProfileRegAddress()
+    protected function validateProfileRegAddress(string $field)
     {
-        if (! isset($this->_profile['REG_ADDRESS']['DISTRICTID']) || ! $this->_profile['REG_ADDRESS']['DISTRICTID']) {
-            $this->_profile_errors['REG_ADDRESS']['DISTRICTID'] = false;
+        $district = $this->_profile['REG_ADDRESS']['DISTRICTID'] ?? null;
+        $verifyDate = $this->_profile['REG_ADDRESS']['VERIFY_DATE'] ?? null;
 
-            return false;
+        $validationDate = $this->_profile['REG_ADDRESS']['VALIDATION_DATE'] ?? null;
+        $validationStatus = $this->_profile['REG_ADDRESS']['VALIDATION_STATUS'] ?? null;
+
+        if ($district && $verifyDate) {
+            return true;
         }
 
-        if (! isset($this->_profile['REG_ADDRESS']['VERIFY_DATE']) || ! $this->_profile['REG_ADDRESS']['VERIFY_DATE']) {
-            $this->_profile_errors['REG_ADDRESS']['VERIFY_DATE'] = false;
+        if ($district && $validationDate && $validationStatus === '1') {
+            return true;
         }
 
-        return true;
+        $this->_profile_errors[$field] = false;
+
+        return false;
     }
 
     /**
      * Валидация района
+     * @param string $field
      * @return bool
      */
-    protected function validateProfileDistrict()
+    protected function validateProfileDistrict(string $field)
     {
-        if (! isset($this->_profile['REG_ADDRESS']['DISTRICTID']) || ! isset($this->_allowed_districts[(int) $this->_profile['REG_ADDRESS']['DISTRICTID']])) {
-            $this->_profile_errors['DISTRICTID'] = false;
+        if (empty($this->_allowed_districts)) {
+            return true;
+        }
+
+        $district = (int) $this->_profile['REG_ADDRESS']['DISTRICTID'] ?? null;
+
+        if (! $district || ! isset($this->_allowed_districts[$district])) {
+            $this->_profile_errors[$field] = false;
 
             return false;
         }
@@ -359,6 +444,33 @@ trait MgdTrait
         return implode($separator, array_map(function($value) {
             return preg_replace('/\s+/', '', $value);
         }, array_values($this->_allowed_districts)));
+    }
+
+    /**
+     * @param string $message
+     * @param mixed $data
+     * @param array $extraFields
+     */
+    protected function logError(string $message, $data, $extraFields = [])
+    {
+        $this->logData['error'] = 1;
+        $this->logData['errorMessage'] = $data;
+
+        if ($extraFields) {
+            $this->logData = array_merge($this->logData, $extraFields);
+        }
+
+        $this->logTrait($message, $this->logData);
+    }
+
+    protected function getProfileErrorsExtraData()
+    {
+        $fields = [];
+        foreach ($this->_profile_errors as $field => $value) {
+            $fields["error" . ucfirst($field)] = true;
+        }
+
+        return $fields;
     }
 
 }

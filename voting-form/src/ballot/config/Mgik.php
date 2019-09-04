@@ -1,12 +1,9 @@
 <?php
 
 return [
-    'debug' => true,
+    'debug' => !empty(cfgEnv('SITE_DEBUG', false)) ? true : false,
     'districts' => [1, 10, 30],
     'service' => [
-        'deputies' => [
-            'url' => 'http://example.ru',
-        ],
         'election' => [
             'url' => [
                 'get' => "http://example.ru",
@@ -15,6 +12,16 @@ return [
                 'send' => "http://example.ru",
                 'crypt' => "http://example.ru",
                 'decrypt' => "http://example.ru",
+            ]
+        ],
+        'blockchain' => [
+            'login' => 'example-login',
+            'password' => 'example-password',
+            'host' => 'http://example.ru',
+            'url' => [
+                'authenticate' => "http://example.ru",
+                'addresses' => 'http://example.ru',
+                'keys' => 'http://example.ru',
             ]
         ],
         'system'=>'example-system',
@@ -33,23 +40,6 @@ return [
             'vote' => 'example-queue-3',
         ]
     ],
-    'dit_voting' => [
-        'ballotRegistryAddress' => 'example-ballotRegistryAddress',
-        'modules' => [
-            'example-module-1',
-            'example-module-2',
-            'example-module-3'
-        ],
-        'generators' => [
-            'example-generator-1',
-            'example-generator-2',
-            'example-generator-3'
-        ],
-        'publicKeys' => [
-            'example-publicKeys-1',
-            'example-publicKeys-2',
-            'example-publicKeys-3'
-        ],
-    ],
+    'security'=>'https://sp.mos.ru/build/main_156_9dd32210_247_899.js',
     'ballot_template' => 'show',
 ];

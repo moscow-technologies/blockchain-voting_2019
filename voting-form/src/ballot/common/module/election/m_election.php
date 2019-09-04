@@ -1,13 +1,16 @@
 <?php
 
+use db;
+use lib;
 use Mgd\Lib\Config\PoolConfig;
 use Mgd\Lib\Cache\MemoryCache;
 use Mgd\Lib\Loggers\GrayLogger;
 use Mgd\Module\election\Service;
 use Mgd\Module\election\TaskVoteRequest;
 use Mgd\Module\election\LogicException;
+use Mgd\Module\election\Settings;
 
-use Mgd\Lib\TaskManager;
+header("X-XSS-Protection: 0");
 
 class m_election extends Module{
 
@@ -19,6 +22,9 @@ class m_election extends Module{
     /** @var Service */
     private $_service;
 
+    /** @var Settings */
+    private $_settings;
+
     /** @var string */
     private $_action;
 
@@ -29,17 +35,16 @@ class m_election extends Module{
         'check',
         'vote',
         'error',
-        'resetcache',
     ];
 
     public function content_init() 
     {
         $this->_config = PoolConfig::me()->conf('Mgik');
         $this->_service = new Service();
+        $this->_settings = new Settings();
 
         $this->tpl = new smarty_ee_module($this);
         $this->tpl->assign('template_path', params::$params['common_data_server'] . 'module_tpl/election/default');
-        $this->tpl->assign('dit_voting', json_encode($this->_config->get('dit_voting'), JSON_UNESCAPED_UNICODE));
 
         try {
             $this->_action = $_GET['action'] ?? self::DEFAULT_ACTION;
@@ -77,13 +82,20 @@ class m_election extends Module{
         $guid = $_REQUEST['guid'] ?? null;
 
         $userData = $this->_service->checkGuid($guid);
-
+   
         $this->tpl->assign('guid', $guid);
         $this->tpl->assign('district', $userData['district']);
+
         $this->tpl->assign('deputies', $this->_service->getDistrictDeputies($userData['district']));
+        $this->tpl->assign('dit_voting', json_encode([
+            'ballotsRegistryAddress' => $this->_settings->get('ballotsRegistryAddress'),
+            'modulo' => $this->_settings->get('modulo'),
+            'generator' => $this->_settings->get('generator'),
+            'publicKey' => $this->_settings->get('publicKey'),
+        ], JSON_UNESCAPED_UNICODE));
 
         $template = $this->_config->get('ballot_template');
-
+        $this->tpl->assign('security', $this->_config->get('security'));
         if (! file_exists("{$this->tpl_dir}{$template}.tpl")) {
             $template = 'show';
         }
@@ -122,6 +134,14 @@ class m_election extends Module{
 
     private function actionSuccess()
     {
+        $sessionId =  @session_id();
+        if ($sessionId) {
+            $tx = MemoryCache::get("tx|$sessionId");
+            $this->tpl->assign('tx', $tx);
+        }
+
+        $this->tpl->assign('mpguUrl', lib::getMpguUrl());
+
         return $this->tpl->fetch($this->tpl_dir . "success.tpl");
     }
 
@@ -130,17 +150,20 @@ class m_election extends Module{
      */
     private function actionVote()
     {
+        $registryAddress = $_POST['registryAddress'] ?? null;
         $guid = $_POST['guid'] ?? null;
         $voterAddress = $_POST['voterAddress'] ?? null;
+        $keyVerificationHash = $_POST['keyVerificationHash'] ?? null;
         $votingId = $_POST['votingId'] ?? null;
         $tx = $_POST['tx'] ?? null;
 
-        if (! ($guid && $voterAddress && $votingId && $tx)) {
+        if (! ($guid && $voterAddress && $keyVerificationHash && $votingId && $tx)) {
             return $this->sendAjaxResponse('error');
         }
 
         $data = [
             'voterAddress' => $voterAddress,
+            'keyVerificationHash' => $keyVerificationHash,
             'votingId' => $votingId,
             'tx' => $tx,
         ];
@@ -151,23 +174,15 @@ class m_election extends Module{
             return $this->sendAjaxResponse(['status' => 'error', 'code' => 2]);
         }
 
+        $sessionId =  @session_id();
+        if ($sessionId) {
+            MemoryCache::set("tx|$sessionId", $tx);
+        }
+
         $request = new TaskVoteRequest(['PGU_USER_ID' => 0], $vote);
         $request->addQueueTask();
 
         return $this->sendAjaxResponse('success');
-    }
-
-    private function actionResetcache()
-    {
-        $configToken = $this->_config->get('reset_deputies_cache_token');
-
-        if (isset($_GET['token']) && $_GET['token'] === $configToken) {
-            $result = MemoryCache::delete(Service::DEPUTIES_CACHE_KEY);
-
-            exit('Reset cache:' . (int) $result);
-        }
-
-        return $this->tpl->fetch($this->tpl_dir . "error.tpl");
     }
 
     /**

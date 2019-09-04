@@ -8,6 +8,8 @@ $(function () {
     var $loader = $('.js-loader');
 
     var isShowDistrictName = false;
+    var isShowQuestion = false;
+    var questions = {};
 
     var districts = {};
     var deputies = {};
@@ -95,13 +97,23 @@ $(function () {
             $districtName.text(districts[currentDistrict].name);
         }
 
+        if (isShowQuestion && questions) {
+            $districtName.text(questions[currentDistrict]);
+        }
+
         $deputiesList.hide()
             .html(renderDeputies(currentDistrict))
             .fadeIn('fast');
     };
 
+    $.checkBrowser({
+        target: '.js-browser-check',
+        loader: '.js-browser-loader',
+        successTemplate: 'browser_success_template'
+    });
+
     $.ajax({
-        url: cfgMainHost + '/common/ajax/lib/getRef/?NameRef=MGD_2019_DISTRICT_DEPUTIES',
+        url: window.mgikDeputiesUrl,
         type: 'get',
         success: function (data) {
             if (data.error !== 0 || ! data.result) {

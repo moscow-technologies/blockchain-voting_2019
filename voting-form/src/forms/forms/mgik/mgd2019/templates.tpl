@@ -4,8 +4,8 @@
         а также будет сохранен в вашем личном кабинете</p>
 
     <div class="popup-buttons text-left">
-        <a href="#" class="button green js-change-address">Да</a>
-        <a href="#" class="button green button-cancel js-change-address-cancel">Нет</a>
+        <a href="#" class="button blue js-change-address">Да</a>
+        <a href="#" class="button blue button-cancel js-change-address-cancel">Нет</a>
     </div>
 </script>
 

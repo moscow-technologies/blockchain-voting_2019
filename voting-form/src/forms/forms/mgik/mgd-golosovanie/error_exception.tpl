@@ -6,8 +6,6 @@
 
     <link rel="stylesheet" type="text/css" href="{$CFG_CSS_HOST}/common/css/new/forms/mgik/mgd2019.css?{$smarty.now|date_format:'%Y-%m-%dT%H'}" />
 
-    <div class="prototype">Прототип</div>
-
     <ul class="errors">
         <li>
             <i class="icon icon-status-error icon-24"></i>

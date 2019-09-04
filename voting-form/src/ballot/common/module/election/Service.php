@@ -2,6 +2,7 @@
 
 namespace Mgd\Module\election;
 
+use lib;
 use Mgd\Lib\Cache\MemoryCache;
 use GuzzleHttp\Client;
 use GuzzleHttp\Psr7\Response;
@@ -13,7 +14,7 @@ use Mgd\Module\election\LogicException;
 class Service
 {
     const DEFAULT_ERROR_MESSAGE = 'По техническим причинам сервис временно недоступен. Пожалуйста, попробуйте позже.';
-    const DEPUTIES_CACHE_KEY = 'MGD_2019_DISTRICT_DEPUTIES';
+    protected  $DEPUTIES_CACHE_KEY = 'MGD_2019_QUESTIONS';
 
     private $_SYSTEM, $_TOKEN;
 
@@ -23,11 +24,24 @@ class Service
     /** @var Client */
     private $_client;
 
+    /** @var array */
+    protected $logData = [];
+
     public function __construct()
     {
         $this->_config = PoolConfig::me()->conf('Mgik');
-        $this->_SYSTEM = $this->_config->get('service/system','MGD');
-        $this->_TOKEN = $this->_config->get('service/token','MGD');
+        $this->_SYSTEM = $this->_config->get('service/system');
+        $this->_TOKEN = $this->_config->get('service/token');
+        switch ($this->_config->get('ballot_template','show')) {
+            case 'show':
+            default:
+                $this->DEPUTIES_CACHE_KEY = 'MGD_2019_DISTRICT_DEPUTIES';
+                break;
+            case 'vybory':
+                $this->DEPUTIES_CACHE_KEY = 'MGD_2019_QUESTIONS';
+                break;
+        }
+        
     }
 
     /**
@@ -159,7 +173,7 @@ class Service
                 'guid' => $guid,
             ],
         ], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
-
+ 
         $response = $this->post($url, $this->getRequest($data));
         if (! $response) {
             throw new LogicException(self::DEFAULT_ERROR_MESSAGE, [
@@ -168,14 +182,13 @@ class Service
         }
 
         $content = json_decode($response);
-
         $log = [
             'url' => $url,
             'guid' => $guid,
             'data' => $data,
             'response' => $content,
         ];
-
+          
         $this->checkErrorResponse($content, $log);
 
         $result = $content->data->result ?? null;
@@ -270,25 +283,6 @@ class Service
     }
 
     /**
-     * @param object $content
-     * @param array $log
-     * @return bool
-     * @throws LogicException
-     */
-    protected function checkErrorResponse($content, $log)
-    {
-        $errorMessage = $content->errorMessage ?? null;
-
-        if ($errorMessage) {
-            throw new LogicException(self::DEFAULT_ERROR_MESSAGE, array_merge([
-                'error' => $errorMessage
-            ], $log));
-        }
-
-        return true;
-    }
-
-    /**
      * Возвращает список депутатов в округе
      * @param integer|null $district_id
      * @param bool $force
@@ -297,49 +291,38 @@ class Service
      */
     public function getDistrictDeputies($district_id = null, $force = false)
     {
+
         if (! $force) {
-            $deputies = MemoryCache::get(self::DEPUTIES_CACHE_KEY);
+            $deputies = MemoryCache::get($this->DEPUTIES_CACHE_KEY);
         }
 
         if ($force || empty($deputies) || ! is_array($deputies)) {
-            $local = $this->_config->get('service/deputies/local', null);
-            $url = $this->_config->get('service/deputies/url');
 
-            $response = $local ? $local : $this->get($url);
-
+            $content = lib::getKeyValueSetData($this->DEPUTIES_CACHE_KEY, false, $force);
+ 
             $log = [
-                'url' => $url,
                 'data' => [
                     'district_id' => $district_id,
                     'force' => $force,
-                    'local' => (bool) $local,
                 ]
             ];
 
-            if (! $response) {
+            if (! $content) {
                 throw new LogicException(self::DEFAULT_ERROR_MESSAGE, array_merge([
-                    'error' => 'Список депутатов: нет ответа от сервера'
-                ], $log));
-            }
-
-            $content = json_decode($response, JSON_OBJECT_AS_ARRAY);
-
-            if (! isset($content['result']) || empty($content['result'])) {
-                throw new LogicException(self::DEFAULT_ERROR_MESSAGE, array_merge([
-                    'error' => 'Список депутатов: некорректный ответ от сервера',
+                    'error' => 'Список депутатов: некорректные данные',
                     'response' => $content
                 ], $log));
             }
 
-            $deputies = $this->formatDeputies($content['result']);
+            $deputies = $this->formatDeputies($content);
 
-            MemoryCache::set(self::DEPUTIES_CACHE_KEY, $deputies, $this->_config->get('service/deputies/cache', 3600));
+            MemoryCache::set($this->DEPUTIES_CACHE_KEY, $deputies, $this->_config->get('service/deputies/cache', 3600));
         }
 
         if ($district_id) {
             if (! isset($deputies[$district_id])) {
-                throw new LogicException(self::DEFAULT_ERROR_MESSAGE, array_merge([
-                    'error' => "Список депутатов: в ответе отсутсутвет ID $district_id"
+                throw new LogicException(self::DEFAULT_ERROR_MESSAGE.' У данного округа нет кандидатов.', array_merge([
+                    'error' => "Список депутатов: отсутсутвет ID $district_id"
                 ], $log));
             }
 
@@ -385,6 +368,161 @@ class Service
         }
 
         return $result;
+    }
+
+    /**
+     * @return string
+     * @throws LogicException
+     */
+    public function getBlockchainAuthenticate()
+    {
+        $url = $this->_config->get('service/blockchain/host') . $this->_config->get('service/blockchain/url/authenticate');
+        $login = $this->_config->get('service/blockchain/login');
+        $password = $this->_config->get('service/blockchain/password');
+
+        $data = json_encode([
+            'login' => $login,
+            'password' => $password,
+        ], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+
+        $response = $this->post($url, [
+            'body' => $data,
+            'headers' => [
+                'Content-Type' => "application/json",
+            ],
+        ]);
+
+        $this->createLogData($url, $data, $response);
+        $content = $this->getContent($response);
+
+        $token = $content->result->token ?? null;
+        if (! $token) {
+            throw new LogicException(self::DEFAULT_ERROR_MESSAGE, array_merge($this->logData, [
+                'errorMessage' => 'В ответе сервера отсутствует токен',
+            ]));
+        }
+
+        return $token;
+    }
+
+    /**
+     * @param string $token
+     * @return string
+     * @throws LogicException
+     */
+    public function getBlockchainRegistryAddress(string $token)
+    {
+        $url = $this->_config->get('service/blockchain/host') . $this->_config->get('service/blockchain/url/addresses');
+
+        $response = $this->get($url, [
+            'headers' => [
+                'Authorization' => "Bearer {$token}",
+            ],
+        ]);
+
+        $this->createLogData($url, $token, $response);
+        $content = $this->getContent($response);
+
+        $address = $content->result->ballotsRegistryAddress ?? null;
+        if (! $address) {
+            throw new LogicException(self::DEFAULT_ERROR_MESSAGE, array_merge($this->logData, [
+                'errorMessage' => 'В ответе сервера отсутствует адрес',
+            ]));
+        }
+
+        return $address;
+    }
+
+    /**
+     * @param string $token
+     * @return object
+     * @throws LogicException
+     */
+    public function getBlockchainEncryptionKeys(string $token)
+    {
+        $url = $this->_config->get('service/blockchain/host') . $this->_config->get('service/blockchain/url/keys');
+
+        $response = $this->get($url, [
+            'headers' => [
+                'Authorization' => "Bearer {$token}",
+            ],
+        ]);
+
+        $this->createLogData($url, $token, $response);
+        $content = $this->getContent($response);
+
+        $modulo = $content->result->modulo ?? null;
+        $generator = $content->result->generator ?? null;
+        $publicKey = $content->result->publicKey ?? null;
+
+        if (! ($modulo && $generator && $publicKey)) {
+            throw new LogicException(self::DEFAULT_ERROR_MESSAGE, array_merge($this->logData, [
+                'errorMessage' => 'В ответе сервера отсутствует один из ключей',
+            ]));
+        }
+
+        return $content->result;
+    }
+
+    protected function createLogData($url, $data = '', $response = '')
+    {
+        $this->logData = [
+            'url' => $url,
+            'action' => basename($url),
+            'data' => $data,
+            'response' => $response,
+        ];
+
+        return $this->logData;
+    }
+
+    /**
+     * @param string $response
+     * @return object
+     * @throws LogicException
+     */
+    protected function getContent(string $response = null)
+    {
+        if (! $response) {
+            throw new LogicException(self::DEFAULT_ERROR_MESSAGE, array_merge($this->logData, [
+                'errorMessage' => 'Нет ответа от сервера',
+            ]));
+        }
+
+        $content = json_decode($response);
+        $this->checkErrorResponse($content);
+
+        return $content;
+    }
+
+    /**
+     * @param object $content
+     * @param array $log
+     * @return bool
+     * @throws LogicException
+     */
+    protected function checkErrorResponse($content, $log = [])
+    {
+        $errorMessage = $content->errorMessage ?? null;
+
+        if ($errorMessage) {
+            throw new LogicException(self::DEFAULT_ERROR_MESSAGE, array_merge([
+                'error' => $errorMessage
+            ], $log));
+        }
+
+        // Ошибки из Blockchain
+        $errorMessage = $content->error->message ?? null;
+        $errorDetails = $content->error->details ?? null;
+
+        if ($errorMessage) {
+            throw new LogicException(self::DEFAULT_ERROR_MESSAGE, array_merge($this->logData, [
+                'errorMessage' => $errorMessage,
+                'errorText' => $errorDetails,
+            ]));
+        }
+
+        return true;
     }
 
 }

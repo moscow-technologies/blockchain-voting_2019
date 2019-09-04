@@ -3,12 +3,10 @@
 namespace Mgd\Module\election;
 
 use params;
-use TaskManager;
+use Mgd\Lib\TaskManager;
 use Mgd\Lib\Config\PoolConfig;
 use Mgd\Lib\Loggers\GrayLogger;
 use Mgd\Lib\MessageBroker\BrokerAmqp;
-
-require_once(params::$params['common_data_server'].'/lib/taskManager.php');
 
 abstract class TaskRequest
 {
@@ -77,13 +75,26 @@ abstract class TaskRequest
      */
     public function addQueueTask()
     {
-        $config = PoolConfig::me()->conf('Mgik')->get('amqp');
-        $broker = new BrokerAmqp($config['host'], $config['port'], $config['login'], $config['password'],null, $config['vhost']);
+//        $config = PoolConfig::me()->conf('Mgik')->get('amqp');
+//        $broker = new BrokerAmqp($config['host'], $config['port'], $config['login'], $config['password'],null, $config['vhost']);
+//        $data = $this->asTaskData();
+//        $result = $broker->send(
+//            $data['queue'],
+//            $data['json'],
+//            ['persistent' => 'true']
+//        );
+
         $data = $this->asTaskData();
-        $result = $broker->send(
-            $data['queue'],
-            $data['json'],
-            ['persistent' => 'true']
+
+        $result = TaskManager::queueTask(
+            $this->client['PGU_USER_ID'],
+            $this->plugin,
+            $data,
+            [
+                'execute_now' => true,
+                'store_in_buffer' => false,
+                'app_id' => $this->app['APP_ID'] ?? null,
+            ]
         );
 
         $logger = GrayLogger::create('MgicTaskManager');

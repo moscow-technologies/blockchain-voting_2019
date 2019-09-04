@@ -33,15 +33,33 @@
     }
 }
 
-.prototype {
-    padding: 10px 15%  20px 0px;
-    font-size: 30px;
-    font-weight: bold;
-    letter-spacing: 3px;
-    text-transform: uppercase;
-    text-align: center;
-    color: #ef3824;
+html {
+    height: 100%;
+}
 
+body {
+    height: 100%;
+}
+
+.wrapper {
+    height: 100%;
+    transform-origin: center  top;
+}
+
+.wrapper--origin {
+    transform: scale(1);
+    overflow: inherit;
+    transition: all 1s;
+}
+
+.overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    cursor: pointer;
+    z-index: 1100;
 }
 
 .info-block.info-block-line.form-additional {
@@ -349,13 +367,15 @@
     text-align: center;
 }
 
-.bulletin__deputies {
-
-}
-
 .bulletin__deputy {
     padding: 15px 0;
     border-bottom: 1px solid #d5dbdf;
+    min-height: 200px;
+    transition: background-color 0.3s ease;
+}
+
+.bulletin__deputy:hover{
+    background: #eee;
 }
 
 .bulletin__deputy:last-child {
@@ -368,7 +388,9 @@
 }
 
 .bulletin__lastname {
-    font-size: 32px;
+    /*font-size: 32px;*/
+    font-size: 24px;
+    padding-right: 70px;
 }
 
 .bulletin__fullname {
@@ -412,13 +434,13 @@
 .bulletin__radio + div {
     width: 50px;
     height: 50px;
-    border: 1px solid #d5dbdf;
+    border: 1px solid black;
     background-color: #fff;
     cursor: pointer;
 }
 
 .bulletin__radio:checked + div {
-    background-image: url(/images/mos-ru/selected.png);
+    background-image: url(/images/mos-ru/selected_2.png);
     background-repeat: no-repeat;
     background-size: cover;
     background-position: center center;
@@ -435,7 +457,8 @@
 
 @media (max-width: 800px) {
     .bulletin__lastname {
-        font-size: 28px;
+        /*font-size: 28px;*/
+        font-size: 21px;
     }
 
     .bulletin__fullname {
@@ -454,10 +477,7 @@
     }
 
     .bulletin__name {
-        margin-right: 70px;
-        height: 174px;
         z-index: 100;
-        background: #fff;
     }
 
     .bulletin__desc {
@@ -475,7 +495,6 @@
         padding-left: 0;
         text-align: right;
         z-index: 101;
-        background: white;
     }
 
     .bulletin__action label {
@@ -491,12 +510,14 @@
     }
 }
 
-.timer_head {
+body .timer_head {
+    position: fixed;
     right: 20px;
     border: 1px solid #898989;
     font-size: 40px;
     font-weight: bold;
     background: #f4f5f7;
+    padding: 10px 20px;
 }
 
 .timer_title {
@@ -512,4 +533,32 @@
     margin-bottom: 5px;
     font-size: 38px;
     color: #0045c6;
+}
+
+.form-result.error {
+    height:696px;
+    background: url(/images/illustration-404.jpg) no-repeat  right center;
+}
+
+.form-result__tx {
+    max-width: 100%;
+    margin-bottom: 1rem;
+    word-break: break-word;
+}
+
+.leavingMessage {
+    display: none;
+    position: fixed;
+    bottom: 100px;
+    left: 50%;
+    background-color: #f4f5f7;
+    text-align: center;
+    color: #525252;
+    font-size: 14px;
+    font-weight: bold;
+    white-space: nowrap;
+}
+.leavingMessageInner {
+    border: 1px solid #898989;
+    padding: 10px 25px;
 }

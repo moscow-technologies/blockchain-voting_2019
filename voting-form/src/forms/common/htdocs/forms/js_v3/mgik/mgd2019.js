@@ -1,4 +1,8 @@
 $.validator.addMethod('dictrict', function (value, element, params) {
+    if (! params) {
+        return true;
+    }
+
     var allowedDistricts = params.split(';');
     var currentDistrict = $('.DistrictInput').val().replace(/\s/g, '');
 
@@ -12,9 +16,8 @@ $.validator.addMethod('dictrict', function (value, element, params) {
 });
 
 $(document).ready(function () {
-    if (! $.checkBrowser()) {
-        $('#form_element').html( OPR.templater('old_browser_content', []) );
-    }
+
+    $.checkBrowser({target: '#form_element'});
 
     var isOkButtonWasPressed = false;
     var confirmPopupContent = OPR.templater('address_change_confirm', []);
@@ -47,26 +50,27 @@ $(document).ready(function () {
     });
 
     $(document).on('click', '.js-change-address', function() {
-        var data = {
-            UNOM: $('.UnomInput').val(),
-            UNAD: $('.UnadInput').val(),
-            FLAT: $('.FlatInput').val()
+        var $form = $('#kladr_1');
+        var regAddress = {
+            REG_ADDRESS: {
+                CORPUSNO: $('.CorpusInput', $form).val(),
+                DISTRICTLABEL: $('.DistrictInput', $form).val(),
+                FLAT: $('.FlatInput', $form).val(),
+                HOUSENO: $('.HouseInput', $form).val(),
+                STREET: $('.StreetInput', $form).val(),
+                STREETNAME: $('.StreetInput', $form).val(),
+                STROENIENO: $('.StroenieInput', $form).val(),
+                UNAD: $('.UnadInput', $form).val(),
+                UNOM: $('.UnomInput', $form).val(),
+            }
         };
 
-        console.log('# DATA ', data);
-
-        // ELK.saveUserProfileData({
-        //     block: 'REG_ADDRESS',
-        //     data: data,
-        //     done: function (data) {
-        //         console.log('Сохранили данные');
-        //         console.log(data);
-        //     },
-        //     error: function (data) {
-        //         console.log('Не смогли сохранить данные');
-        //         console.log(data);
-        //     },
-        // });
+        ELK.saveUserProfileData({
+            block: 'REG_ADDRESS',
+            data: regAddress,
+            done: function (data) {},
+            error: function (data) {},
+        });
 
         isOkButtonWasPressed = true;
         formController.advanceNext();

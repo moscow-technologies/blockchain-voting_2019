@@ -10,6 +10,7 @@
     "coverage": "nyc --reporter html mocha"
   },
   "dependencies": {
+    "ethers": "4.0.27",
     "jsbn": "1.1.0",
     "node-rsa": "^1.0.5",
     "randombytes": "2.1.0",

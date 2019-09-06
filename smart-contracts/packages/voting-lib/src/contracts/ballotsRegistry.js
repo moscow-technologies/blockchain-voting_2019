@@ -9,6 +9,8 @@ const { txReceiptParseLogs, bigIntToBytes, bytesToBigInt } = require('../helpers
 
 const Ownable = require('./ownable.js');
 
+const SOLIDITY_MAX_UINT_SIZE = 256;
+
 /**
  * Normalizes some units in ballot data ontained from blockchain
  * @param {Object} ballotData - ballot data from blockchain
@@ -305,10 +307,35 @@ class BallotsRegistry extends Ownable {
       return Promise.resolve();
     }
 
-    const decrypted = await cryptor.decrypt({
-      a: ballotData.encryptedA,
-      b: ballotData.encryptedB,
-    });
+    let decrypted;
+
+    try {
+      decrypted = await cryptor.decrypt({
+        a: ballotData.encryptedA,
+        b: ballotData.encryptedB,
+      });
+    } catch (err) {
+      err.code = 'BAD_ENCRYPTED_DATA';
+      err.details = JSON.stringify({
+        index,
+        encryptedA: ballotData.encryptedA.toString(),
+        encryptedB: ballotData.encryptedB.toString(),
+      });
+      throw err;
+    }
+
+    if ((new BigInt(decrypted)).bitLength() > SOLIDITY_MAX_UINT_SIZE) {
+      // eslint-disable-next-line prefer-const
+      let err = new Error(`Encrypted value should not be more that ${SOLIDITY_MAX_UINT_SIZE} bits length`);
+      err.code = 'BAD_ENCRYPTED_DATA';
+      err.details = JSON.stringify({
+        index,
+        encryptedA: ballotData.encryptedA.toString(),
+        encryptedB: ballotData.encryptedB.toString(),
+        decrypted,
+      });
+      throw err;
+    }
 
     const tx = await this.contract.storeDecryptedData(index, decrypted);
     return tx.wait();

@@ -1,4 +1,5 @@
 // Based on MIT licensed work of Kristóf Poduszló in 2016 https://github.com/kripod/elgamal.js
+const ethers = require('ethers');
 const { BigInteger: BigInt } = require('jsbn');
 
 const {
@@ -69,6 +70,19 @@ class ElGamal {
   }
 
   /**
+   * Retuns key verification hash which allows to encsure that all cryptosystem
+   * params are set correctly
+   * @return {String} - sha256 hash of moduleP|generatorG|publicKey
+   */
+  getKeyVerificationHash() {
+    return ethers.utils.id([
+      this.moduleP.toString(),
+      this.generatorG.toString(),
+      this.publicKey.toString(),
+    ].join('|'));
+  }
+
+  /**
    * @returns {BigInt}
    */
   getDecryptor(encryptedData) {
@@ -111,12 +125,12 @@ class ElGamal {
     const randomBigInt = await getRandomBigInt(BigInt.ONE, this.moduleP.subtract(BigInt.ONE));
     const xoredRandomBigInt = randomBigInt.xor(entropyAsBI);
     const sessionKey = trimBigInt(xoredRandomBigInt, this.moduleP.bitLength() - 1);
-
-    const sharedKey = this.publicKey.modPow(sessionKey, this.moduleP);
+    const squaredData = dataAsBI.modPow(new BigInt('2'), this.moduleP);
 
     const a = this.generatorG.modPow(sessionKey, this.moduleP).toString();
-    const b = sharedKey
-      .multiply(dataAsBI)
+    const b = this.publicKey
+      .modPow(sessionKey, this.moduleP)
+      .multiply(squaredData)
       .remainder(this.moduleP)
       .toString();
 
@@ -130,10 +144,22 @@ class ElGamal {
   async decrypt(encryptedData) {
     const decryptor = this.getDecryptor(encryptedData);
 
-    return new BigInt(encryptedData.b.toString())
+    const squared = new BigInt(encryptedData.b.toString())
       .multiply(decryptor)
-      .remainder(this.moduleP)
-      .toString();
+      .remainder(this.moduleP);
+
+    const criterion = squared.modPow(this.moduleP.subtract(BigInt.ONE).divide(new BigInt('2')), this.moduleP);
+
+    if (criterion.compareTo(BigInt.ONE) !== 0) {
+      throw new Error('Data is incorrect: encrypted value should be quadratic residue moduleP');
+    }
+
+    const decryptedValue = squared.modPow(this.moduleP.add(BigInt.ONE).divide(new BigInt('4')), this.moduleP);
+    const decryptedValueNegative = this.moduleP.subtract(decryptedValue);
+
+    return (decryptedValueNegative.compareTo(decryptedValue) > 0)
+      ? decryptedValue.toString()
+      : decryptedValueNegative.toString();
   }
 }
 

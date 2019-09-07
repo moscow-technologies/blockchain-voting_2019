@@ -9,7 +9,7 @@
             <div class="form-result shadow-bottom">
                 <h2>Спасибо, ваш голос учтен!</h2>
 
-                {if $tx}
+                {if $tx && $isShowTxResult}
                     <p>Ниже представлен ваш зашифрованный голос.</p>
                     <div class="form-result__tx">{$tx}</div>
 

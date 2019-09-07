@@ -30,8 +30,8 @@ class Service
     public function __construct()
     {
         $this->_config = PoolConfig::me()->conf('Mgik');
-        $this->_SYSTEM = $this->_config->get('service/system');
-        $this->_TOKEN = $this->_config->get('service/token');
+        $this->_SYSTEM = $this->_config->get('service/system','MGD');
+        $this->_TOKEN = $this->_config->get('service/token','MGD');
         switch ($this->_config->get('ballot_template','show')) {
             case 'show':
             default:
@@ -350,19 +350,15 @@ class Service
 
             foreach ($deputies as $id => $deputy) {
                 $parts = array_map('trim', explode('|', $deputy));
-
                 $result[$district_id][$id] = [
                     'id' => $parts[0] ?? '',
                     'last_name' => $parts[1] ?? '',
                     'first_name' => $parts[2] ?? '',
                     'middle_name' => $parts[3] ?? '',
-                    'date' => $parts[4] ?? '',
-                    'university' => $parts[5] ?? '',
-                    'faculty' => $parts[6] ?? '',
-                    'specialty' => $parts[7] ?? '',
-                    'logo' => $parts[8] ?? '',
-                    'photo' => $parts[9] ?? '',
-                    'description' => $parts[10] ?? '',
+                    'photo' => $parts[4] ?? '',
+                    'description' => $parts[5] ?? '',
+                    'descriptionFull' => $parts[6] ?? '',
+                    'income' => $parts[7] ?? '',
                 ];
             }
         }

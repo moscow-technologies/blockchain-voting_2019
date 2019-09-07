@@ -80,7 +80,6 @@ class m_election extends Module{
     private function actionDefault()
     {
         $guid = $_REQUEST['guid'] ?? null;
-
         $userData = $this->_service->checkGuid($guid);
    
         $this->tpl->assign('guid', $guid);
@@ -134,12 +133,13 @@ class m_election extends Module{
 
     private function actionSuccess()
     {
-        $sessionId =  @session_id();
+        $sessionId = @session_id();
         if ($sessionId) {
             $tx = MemoryCache::get("tx|$sessionId");
             $this->tpl->assign('tx', $tx);
         }
 
+        $this->tpl->assign('isShowTxResult', $this->_config->get('show_tx_result'));
         $this->tpl->assign('mpguUrl', lib::getMpguUrl());
 
         return $this->tpl->fetch($this->tpl_dir . "success.tpl");
@@ -174,7 +174,7 @@ class m_election extends Module{
             return $this->sendAjaxResponse(['status' => 'error', 'code' => 2]);
         }
 
-        $sessionId =  @session_id();
+        $sessionId = @session_id();
         if ($sessionId) {
             MemoryCache::set("tx|$sessionId", $tx);
         }

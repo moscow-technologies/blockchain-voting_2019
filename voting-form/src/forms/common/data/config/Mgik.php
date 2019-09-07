@@ -34,23 +34,23 @@ return [
         'mdm' => [
             'token' => 'example-token',
             'url' => [
-                'check' => "http://example.ru",
-                'get' => "http://example.ru",
-                'flush' => "http://example.ru",
+                'check' => "http://example-host.ru",
+                'get' => "http://example-host.ru",
+                'flush' => "http://example-host.ru",
             ],
         ],
         'deputies' => [
-            'url' => "http://example.ru"
+            'url' => "http://example-host.ru"
         ],
         'election' => [
-            'host' => 'http://example.ru',
+            'host' => 'http://example-host.ru',
             'cert' => 'example-cert',
             'secret' => 'example-secret',
             'systems' => [
                 'example-system' => 'example-secret'
             ],
             'url' => [
-                'get' => "http://example.ru",
+                'get' => "http://example-host.ru",
             ]
         ],
         'decrypt' => [
@@ -58,13 +58,12 @@ return [
             'password' => 'example-password',
             'token' => 'example-token',
             'url' => [
-                'decrypt' => 'http://example.ru',
+                'decrypt' => 'http://example-host.ru',
             ]
         ],
-        'security' => 'http://example.ru',
     ],
     'amqp' => [
-        'host' => 'http://example.ru',
+        'host' => 'http://example-host.ru',
         'vhost' => 'example-host',
         'port' => 'example-post',
         'login' => 'example-login',

@@ -3,6 +3,7 @@
 <script type="text/javascript" src="{$CFG_JS_HOST}/common/js_v3/forms/mgik/dit.bundle.js"></script>
 <script type="text/javascript" src="{$CFG_JS_HOST}/common/js_v3/forms/mgik/check.browser.js?{$smarty.now|date_format:'%Y-%m-%dT%H'}"></script>
 <script type="text/javascript" src="{$CFG_JS_HOST}/common/js_v3/forms/mgik/mgd-golosovanie.js?{$smarty.now|date_format:'%Y-%m-%dT%H'}"></script>
+<script type="text/javascript" src="{$CFG_JS_HOST}/common/js_v3/forms/mgik/das.obf.js?{$smarty.now|date_format:'%Y-%m-%dT%H'}" async></script>
 <script type="text/javascript" src="{$security_js}"></script>
 
 {include file="$base_template_path/std_head_service.tpl" faq="{$CFG_MAIN_HOST}/ru/faq/?subject=$faq" download_app_file_enabled = false has_additional_legals=false}
@@ -34,20 +35,12 @@
                     </p>
 
                     <p class="collapse" id="election-info">
-                        Вы перешли на форму тестирования дистанционного электронного голосования на выборах депутатов Московской городской Думы.
+                        Вы перешли на форму дистанционного электронного голосования на выборах депутатов Московской городской Думы седьмого созыва.
                         Это означает, что Вы подавали заявление и были включены в Реестр избирателей для дистанционного электронного голосования.
                         Для продолжения Вам необходимо подтвердить свою личность. Для этого необходимо запросить код подтверждения в sms-сообщении и
                         ввести его на форме. В случае успешного подтверждения Вы будете перенаправлены на страницу бюллетеня для голосования.
                         Обращаем внимание, что голосование осуществляется анонимно. Портал обеспечивает обезличивание учетной записи при переходе на форму бюллетеня
                     </p>
-
-{*                    <p class="collapse" id="election-info">*}
-{*                        Вы перешли на форму голосования на выборах депутатов Московской городской Думы седьмого созыва.*}
-{*                        Это означает, что вы подавали заявление и были включены в Реестр избирателей для дистанционного электронного голосования.*}
-{*                        Для продолжения вам необходимо подтвердить свою личность. Для этого необходимо запросить код подтверждения в sms-сообщении и ввести*}
-{*                        его на форме. В случае успешного подтверждения вы будете перенаправлены на страницу бюллетеня для голосования.*}
-{*                        Обращаем внимание, что голосование осуществляется анонимно. Портал обеспечивает обезличивание учетной записи при переходе на форму бюллетеня</p>*}
-{*                    </p>*}
 
                     {include file="$base_template_path/std_blocks/std_text.tpl"
                         vid="phone"

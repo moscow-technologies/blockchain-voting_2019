@@ -26,7 +26,7 @@ class Service
 
     const SUDIR_COOKIE_NAME = 'example-cookie';
 
-    const DEPUTIES_CACHE_KEY = 'example-key';
+    const DEPUTIES_CACHE_KEY = 'MGD_2019_DISTRICT_DEPUTIES';
 
     /** @var PoolConfig */
     private $_config;
@@ -216,7 +216,6 @@ class Service
     /**
      * Получить бюллетень в МДМ
      * @param string $ssoId
-     * @param bool $testMode
      * @return bool|array
      * @throws LogicException
      */
@@ -279,7 +278,7 @@ class Service
      * @return array
      * @throws LogicException
      */
-    protected function getContent(string $ssoId, string $url)
+    protected function getContent(string $ssoId = null, string $url = null)
     {
         $token = $this->_config->get('service/mdm/token');
 
@@ -615,13 +614,10 @@ class Service
                     'last_name' => $parts[1] ?? '',
                     'first_name' => $parts[2] ?? '',
                     'middle_name' => $parts[3] ?? '',
-                    'date' => $parts[4] ?? '',
-                    'university' => $parts[5] ?? '',
-                    'faculty' => $parts[6] ?? '',
-                    'specialty' => $parts[7] ?? '',
-                    'logo' => $parts[8] ?? '',
-                    'photo' => $parts[9] ?? '',
-                    'description' => $parts[10] ?? '',
+                    'photo' => $parts[4] ?? '',
+                    'description' => $parts[5] ?? '',
+                    'descriptionFull' => $parts[6] ?? '',
+                    'income' => $parts[7] ?? '',
                     'district' => $district,
                 ];
             }

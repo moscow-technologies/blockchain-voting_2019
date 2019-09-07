@@ -6,29 +6,29 @@ return [
     'service' => [
         'election' => [
             'url' => [
-                'get' => "http://example.ru",
-                'check' => "http://example.ru",
-                'check_sign' => "http://example.ru",
-                'send' => "http://example.ru",
-                'crypt' => "http://example.ru",
-                'decrypt' => "http://example.ru",
+                'get' => "http://example-host.ru",
+                'check' => "http://example-host.ru",
+                'check_sign' => "http://example-host.ru",
+                'send' => "http://example-host.ru",
+                'crypt' => "http://example-host.ru",
+                'decrypt' => "http://example-host.ru",
             ]
         ],
         'blockchain' => [
             'login' => 'example-login',
             'password' => 'example-password',
-            'host' => 'http://example.ru',
+            'host' => 'http://example-host.ru',
             'url' => [
-                'authenticate' => "http://example.ru",
-                'addresses' => 'http://example.ru',
-                'keys' => 'http://example.ru',
+                'authenticate' => "http://example-host.ru",
+                'addresses' => 'http://example-host.ru',
+                'keys' => 'http://example-host.ru',
             ]
         ],
         'system'=>'example-system',
         'token'=>'example-token'
     ],
     'amqp' => [
-        'host' => 'http://example.ru',
+        'host' => 'http://example-host.ru',
         'vhost' => 'example-vhost',
         'port' => 'example-post',
         'login' => 'example-login',
@@ -40,6 +40,6 @@ return [
             'vote' => 'example-queue-3',
         ]
     ],
-    'security'=>'https://sp.mos.ru/build/main_156_9dd32210_247_899.js',
-    'ballot_template' => 'show',
+    'ballot_template' => cfgEnv('BALLOT_TEMPLATE', 'show'),
+    'show_tx_result' => cfgEnv('SHOW_TX_RESULT', false),
 ];

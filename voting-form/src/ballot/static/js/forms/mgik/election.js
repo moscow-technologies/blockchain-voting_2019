@@ -8,8 +8,12 @@ $(function() {
     var guid = $('#guid').val();
     var userEntropy = '';
 
-    var spaceForButton = 54; // Место, которое займёт кнопка в мобильной вёрстке.
+    var spaceForButton = 64; // Место, которое займёт кнопка в мобильной вёрстке.
+    var nameMinHeight = 80; // Минимальноа высота заголовка пункта в мобильной вёрстке.
+    var defaultSpaceForButton = 30;
     
+    var resizedWidth = 0;
+
     var initTimer = function (timestamp, show_sec, period, callback) {
         if (period == undefined ||(period < 60000 && !show_sec)) period = 60000;
         if (typeof timer_head !== 'undefined' ) {
@@ -62,8 +66,8 @@ $(function() {
     var setButtonsPosition = function() {
         if (isMobileView()) {
             var minMarginTop = -54; // Минимальное значение при котором кнопка не наезжает на чекбокс.
-            var littleClose = 5; // Кнопка будет немного пересекаться с областью названия пункта,
-                                 // тогда визуально отстуа от названия будет меньше, а от описания - больше.
+            var littleClose = 15; // Кнопка будет немного пересекаться с областью названия пункта,
+                                  // тогда визуально отстуа от названия будет меньше, а от описания - больше.
             var $deputies = $('.bulletin__deputy');
             for (var i = 0; i < $deputies.length; i++) {
                 var paddingTop = parseInt($deputies.eq(i).css('paddingTop'));
@@ -86,7 +90,11 @@ $(function() {
         var maxHeight = 0;
         
         $deputies.height('auto');
-        $('.bulletin__name').css('margin-bottom', spaceForButton + 'px');
+        
+        var margin = isMobileView() ? spaceForButton : Math.floor(defaultSpaceForButton * 1.5);
+        $('.bulletin__name').css('margin-bottom', margin + 'px');
+        var minHeight = isMobileView() ? nameMinHeight : 'auto';
+        $('.bulletin__name').css('minHeight', minHeight);
         
         for (var i = 0; i < $deputies.length; i++) {
             var height = $deputies.eq(i).height();
@@ -95,11 +103,29 @@ $(function() {
                 maxHeight = height;
             }
         }
-
-        $('.bulletin__name').css('margin-bottom', '0');
+        
+        if (isMobileView()) {
+            $('.bulletin__name').css('margin-bottom', 0);
+        } else {
+            $('.bulletin__name').css('margin-bottom', defaultSpaceForButton);
+        }
         $deputies.height(maxHeight);
     };
     
+    var slideUpName = function () {
+        if (isMobileView()) {
+            $('.bulletin__name').stop().animate(
+                {
+                    'marginBottom': 0
+                },
+                'fast',
+                function() {
+                    $('.bulletin__name').css('minHeight', nameMinHeight);
+                }
+            );
+        }
+    };
+
     var receiveGuid = function () {
         $.ajax({
             type: 'post',
@@ -156,8 +182,6 @@ $(function() {
         });
     };
 
-    receiveGuid();
-    transformContent();
 
     $('.overlay').on('click', function (e) {
         $(this).remove();
@@ -166,25 +190,42 @@ $(function() {
 
         $wrapper.removeAttr('style').addClass('wrapper--origin');
         $html.css('overflow', 'inherit');
+        setBullSizes();
+        setButtonsPosition();
     });
 
     $(window).resize(function ()  {
-        setBullSizes();
-        setButtonsPosition();
-
-        $('.bulletin__name').css('margin-bottom', '0');
-        if (isMobileView()) {
-            var checkedEl = $('.bulletin__radio:checked');
+         // Не выполнять этих действий, если для этой ширины уже отработали.
+         // Например не выполнять действий если изменилась высота окна.
+        if (resizedWidth !== $(document).width()) {
+            resizedWidth = $(document).width();
             
-            if (checkedEl.length) {
-                checkedEl.closest('.bulletin__deputy').find('.bulletin__name').css('margin-bottom', spaceForButton + 'px');
+            setBullSizes();
+            setButtonsPosition();
+
+            if (isMobileView()) {
+                $('.bulletin__name').css('margin-bottom', 0);
+            } else {
+                $('.bulletin__name').css('margin-bottom', defaultSpaceForButton);
+            }
+            var minHeight = isMobileView() ? nameMinHeight : 'auto';
+            $('.bulletin__name').css('minHeight', minHeight);
+            if (isMobileView()) {
+                var checkedEl = $('.bulletin__radio:checked');
+                
+                if (checkedEl.length) {
+                    checkedEl.closest('.bulletin__deputy').find('.bulletin__name').css('margin-bottom', spaceForButton + 'px');
+                }
             }
         }
     });
 
     $(document).on('ready', function() {
+        receiveGuid();
         sendHit('Открытие бюллетеня','open');
+
         setBullSizes();
+        transformContent();
         setButtonsPosition();
     });
     
@@ -198,6 +239,8 @@ $(function() {
         $buttons.hide();
         $radios.removeAttr('checked');
         $radios.data('previousValue', false);
+
+        slideUpName();
     });
 
     $radios.on('click', function () {
@@ -211,20 +254,21 @@ $(function() {
             $this.removeAttr('checked');
             $this.data('previousValue', false);
 
-            sendHit('Снят выбор варианта', 'change');
+            slideUpName();
         } else {
             $radios.data('previousValue', false);
             $this.data('previousValue', 'checked');
-
-            sendHit('Выбор варианта', 'unchange');
 
             if (isMobileView()) {
                 var $name = $this.closest('.bulletin__deputy').find('.bulletin__name');
 
                 if ($name.length) {
-                    $('.bulletin__name').css('margin-bottom', '0');
-                    $name.animate(
-                        {'marginBottom': spaceForButton},
+                    $('.bulletin__name').css('margin-bottom', 0);
+                    $('.bulletin__name').css('minHeight', nameMinHeight);
+                    $name.stop().animate(
+                        {
+                            'marginBottom': spaceForButton
+                        },
                         'fast',
                         function() {
                             $button.fadeIn('fast');

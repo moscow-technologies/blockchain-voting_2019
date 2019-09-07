@@ -7,7 +7,7 @@ $(function () {
     var $districtName = $('.js-district-name', $deputiesBox);
     var $loader = $('.js-loader');
 
-    var isShowDistrictName = false;
+    var isShowDistrictName = true;
     var isShowQuestion = false;
     var questions = {};
 
@@ -38,13 +38,10 @@ $(function () {
                         lastName: data[1],
                         firstName: data[2],
                         middleName: data[3],
-                        year: data[4],
-                        university: data[5],
-                        faculty: data[6],
-                        specialty: data[7],
-                        logo: data[8],
-                        photo: data[9],
-                        desc: data[10],
+                        photo: data[4],
+                        desc: data[5],
+                        descFull: data[6],
+                        income: data[7],
                     });
                 }
             });
@@ -57,7 +54,9 @@ $(function () {
         var html = '';
 
         $.each(districts, function (index, item) {
-            html = html + '<li><a class="js-district-link" href="#" data-id="' + item.id + '">' + item.name + '</a></li>';
+            var classes = 'js-district-link' + (currentDistrict === item.id ? ' active' : '');
+
+            html = html + '<li><a class="' + classes + '" href="#" data-id="' + item.id + '">' + item.name + '</a></li>';
         });
 
         return html;
@@ -132,7 +131,11 @@ $(function () {
     });
 
     $candidatesBox.on('click', '.js-district-link', function () {
-        var districtId = $(this).data('id');
+        var $this = $(this);
+        var districtId = $this.data('id');
+
+        $('.js-district-link').removeClass('active');
+        $this.toggleClass('active');
 
         updateDeputies(districtId);
 

@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="12px" height="7px" viewBox="0 0 12 7" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: sketchtool 50.2 (55047) - http://www.bohemiancoding.com/sketch -->
+    <title>B3E179E2-1BB1-4620-BF88-B69A6875B8B0</title>
+    <desc>Created with sketchtool.</desc>
+    <defs></defs>
+    <g id="ui-kit" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="0060-Style---Icons" transform="translate(-190.000000, -903.000000)">
+            <g id="Input" transform="translate(80.000000, 842.000000)">
+                <g id="ui/el/3-strelka-vniz" transform="translate(104.000000, 48.000000)">
+                    <rect id="24x24" x="0" y="4" width="24" height="24"></rect>
+                    <g id="Group" stroke-width="1" fill-rule="evenodd" transform="translate(7.000000, 14.000000)" stroke="#9EA4AC" stroke-linecap="round">
+                        <polyline id="Line-Copy-5" stroke-width="1.25" transform="translate(5.000000, 2.500000) scale(1, -1) rotate(180.000000) translate(-5.000000, -2.500000) " points="0 -3.41060513e-13 5 5 10 -3.41060513e-13"></polyline>
+                    </g>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="14px" height="14px" viewBox="0 0 14 14" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: sketchtool 58 (101010) - https://sketch.com -->
+    <title>24D701EF-85A4-4970-9707-EEEA0F583F99</title>
+    <desc>Created with sketchtool.</desc>
+    <g id="ui-kit" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="0060-Style---Icons" transform="translate(-173.000000, -1148.000000)">
+            <g id="icon/Result/Mini/Info" transform="translate(173.000000, 1148.000000)">
+                <circle id="Oval-4" fill="#FFAF00" cx="7" cy="7" r="7"></circle>
+                <path d="M7,11 C6.58578644,11 6.25,10.6642136 6.25,10.25 C6.25,9.83578644 6.58578644,9.5 7,9.5 C7.41421356,9.5 7.75,9.83578644 7.75,10.25 C7.75,10.6642136 7.41421356,11 7,11 Z M7,3 C7.39731407,3 7.71940076,3.32208669 7.71940076,3.71940076 C7.71940076,3.72938702 7.71919282,3.7393722 7.71877709,3.7493498 L7.52081527,8.50043346 C7.50918174,8.77963813 7.27944693,9 7,9 C6.72055307,9 6.49081826,8.77963813 6.47918473,8.50043346 L6.28122291,3.7493498 C6.26468251,3.35238018 6.57308133,3.01716407 6.97005095,3.00062367 C6.98002856,3.00020793 6.99001374,3 7,3 L7,3 Z" id="Shape" fill="#211200" fill-rule="nonzero"></path>
+            </g>
+        </g>
+    </g>
+</svg>

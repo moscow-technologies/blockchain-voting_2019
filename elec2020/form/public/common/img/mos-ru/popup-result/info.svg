@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="56px" height="56px" viewBox="0 0 56 56" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: sketchtool 50.2 (55047) - http://www.bohemiancoding.com/sketch -->
+    <title>08395B90-EF81-4E3D-9064-BBEB70667C66</title>
+    <desc>Created with sketchtool.</desc>
+    <defs></defs>
+    <g id="ui-kit" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="0060-Style---Icons" transform="translate(-356.000000, -1860.000000)">
+            <g id="Status" transform="translate(80.000000, 1678.000000)">
+                <g id="icon/popup-result/info" transform="translate(276.000000, 182.000000)">
+                    <circle id="Oval" stroke="#FFAF00" stroke-width="1.5" cx="28" cy="28" r="27.25"></circle>
+                    <path d="M28,35.5555556 L28,13" id="Line-2" stroke="#FFAF00" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
+                    <circle id="Oval-2" fill="#FFAF00" fill-rule="evenodd" cx="28" cy="41.5" r="1.5"></circle>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>

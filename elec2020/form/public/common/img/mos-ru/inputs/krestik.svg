@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="14px" height="14px" viewBox="0 0 14 14" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: sketchtool 50.2 (55047) - http://www.bohemiancoding.com/sketch -->
+    <title>3088199D-70C2-46CF-872E-4B6BDE3D6384</title>
+    <desc>Created with sketchtool.</desc>
+    <defs></defs>
+    <g id="ui-kit" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="0060-Style---Icons" transform="translate(-135.000000, -899.000000)">
+            <g id="Input" transform="translate(80.000000, 842.000000)">
+                <g id="ui/el/2-krestik" transform="translate(52.000000, 48.000000)">
+                    <rect id="24x24" x="0" y="4" width="24" height="24"></rect>
+                    <g id="Group" stroke-width="1" fill-rule="evenodd" transform="translate(3.000000, 9.000000)" fill="#9EA4AC" stroke="#9EA4AC">
+                        <path d="M6.83363094,6.12652416 L12.3137085,0.646446609 C12.5089706,0.451184464 12.8255531,0.451184464 13.0208153,0.646446609 C13.2160774,0.841708755 13.2160774,1.15829124 13.0208153,1.35355339 L7.54073773,6.83363094 L13.0208153,12.3137085 C13.2160774,12.5089706 13.2160774,12.8255531 13.0208153,13.0208153 C12.8255531,13.2160774 12.5089706,13.2160774 12.3137085,13.0208153 L6.83363094,7.54073773 L1.35355339,13.0208153 C1.15829124,13.2160774 0.841708755,13.2160774 0.646446609,13.0208153 C0.451184464,12.8255531 0.451184464,12.5089706 0.646446609,12.3137085 L6.12652416,6.83363094 L0.646446609,1.35355339 C0.451184464,1.15829124 0.451184464,0.841708755 0.646446609,0.646446609 C0.841708755,0.451184464 1.15829124,0.451184464 1.35355339,0.646446609 L6.83363094,6.12652416 Z" id="Combined-Shape" stroke-width="0.25" fill-rule="nonzero"></path>
+                    </g>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>

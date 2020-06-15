@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="17px" height="18px" viewBox="0 0 17 18" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: sketchtool 50.2 (55047) - http://www.bohemiancoding.com/sketch -->
+    <title>A05554A3-DB53-4B4F-A2D1-16D36546CF61</title>
+    <desc>Created with sketchtool.</desc>
+    <defs></defs>
+    <g id="ui-kit" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="0060-Style---Icons" transform="translate(-548.000000, -897.000000)">
+            <g id="Input" transform="translate(80.000000, 842.000000)">
+                <g id="ui/el/icon-search" transform="translate(468.000000, 48.000000)">
+                    <rect id="24x24" x="0" y="4" width="24" height="24"></rect>
+                    <g id="Search" stroke-width="1" fill-rule="evenodd" transform="translate(0.000000, 8.000000)" fill="#9EA4AC" opacity="0.98999995" stroke="#9EA4AC">
+                        <g id="Group" transform="translate(0.250000, 0.000000)" stroke-width="0.25">
+                            <path d="M7.32105,14.6455 C5.3652,14.6455 3.5275,13.8839 2.14625,12.5018 C0.7616,11.11885 0,9.2786 0,7.32105 C0.0034,5.36605 0.7616,3.52495 2.14455,2.1454 C3.5275,0.7616 5.36605,0 7.32105,0 C9.2752,0 11.1112,0.7616 12.49415,2.1454 C15.3476,5.00055 15.3476,9.64495 12.49415,12.5018 C11.1129,13.8839 9.2752,14.6455 7.32105,14.6455 M7.32105,1.45775 C5.75365,1.45775 4.28315,2.0672 3.1756,3.1756 C2.06805,4.28315 1.45945,5.75535 1.45945,7.32105 C1.45945,8.8893 2.06805,10.3649 3.1756,11.4682 C4.28315,12.57915 5.75365,13.18775 7.32105,13.18775 C8.88505,13.18775 10.35725,12.5783 11.4631,11.4699 C13.75045,9.18255 13.75045,5.4604 11.4648,3.17475 C10.3581,2.0672 8.88505,1.45775 7.32105,1.45775" id="Shape"></path>
+                            <rect id="Rectangle-path" transform="translate(14.034451, 14.043563) rotate(45.024309) translate(-14.034451, -14.043563) " x="11.1266286" y="13.3151196" width="5.81564475" height="1.45688616" rx="0.72844308"></rect>
+                        </g>
+                    </g>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>

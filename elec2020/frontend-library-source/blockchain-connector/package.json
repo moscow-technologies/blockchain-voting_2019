@@ -1,0 +1,11 @@
+{
+  "name": "blockchain-connector",
+  "version": "0.0.0",
+  "description": "Connector library for sending transactions & making requests to blockchain node",
+  "main": "index.js",
+  "dependencies": {
+    "axios": "^0.19.0",
+    "exonum-client": "^0.17.1",
+    "tweetnacl": "^0.14.5"
+  }
+}

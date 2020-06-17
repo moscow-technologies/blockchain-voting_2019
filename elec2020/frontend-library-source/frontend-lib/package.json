@@ -1,0 +1,9 @@
+{
+  "name": "frontend-lib",
+  "version": "0.0.0",
+  "main": "index.js",
+  "dependencies": {
+    "blockchain-connector": "0.0.0",
+    "crypto-lib": "0.0.0"
+  }
+}

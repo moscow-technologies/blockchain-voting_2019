@@ -1,0 +1,9 @@
+{
+  "name": "crypto-lib",
+  "version": "0.0.0",
+  "main": "index.js",
+  "dependencies": {
+    "js-sha256": "^0.9.0",
+    "tweetnacl": "^0.14.5"
+  }
+}

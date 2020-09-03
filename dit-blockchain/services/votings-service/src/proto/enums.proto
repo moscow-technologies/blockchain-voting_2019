@@ -1,0 +1,10 @@
+syntax = "proto3";
+
+package votings_service;
+
+enum VotingState {
+  Registration = 0;
+  InProcess = 1;
+  Stopped = 2;
+  Finished = 3;
+}

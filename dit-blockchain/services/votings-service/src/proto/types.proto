@@ -1,0 +1,19 @@
+syntax = "proto3";
+
+package votings_service;
+
+message BigUint {
+  bytes data = 1;
+}
+
+message SealedBoxPublicKey {
+  bytes data = 1;
+}
+
+message SealedBoxSecretKey {
+  bytes data = 1;
+}
+
+message SealedBoxNonce {
+  bytes data = 1;
+}

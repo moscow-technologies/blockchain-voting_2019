@@ -1,0 +1,83 @@
+@media print {   
+	
+	
+	.right-side,.nav-tabs,.urgent-message,img.ui-datepicker-trigger,.holder img, .form-horizoontal .additional, .pmulti_link,.form-controls{
+		display: none!important;
+	}
+	
+	h1{
+		font-size:20px!important;
+	}
+	input{
+		color:#000!important;
+	}	
+	.chosen-container-single .chosen-single, .chosen-container-multi .chosen-choices, .messagebox-body input{
+		border: none !important;		
+	}
+	.form-horizoontal{
+		padding:0px!important;
+		margin:0px!important;
+	}
+	.form-horizoontal label{
+		float:left!important;
+		width:250px!important;				
+		min-height: 15px!important;
+		padding:0px!important;
+		margin:0px!important;
+	}
+	.form-horizoontal .holder{
+		float:left!important;
+		width:250px!important;				
+		min-height: 15px!important;
+		padding:0px!important;
+		margin:0px!important;
+	}
+	.form-horizoontal .holder input,.form-horizoontal .chosen-container{
+		width:250px!important;
+		border:none!important;	
+		padding:0px!important;
+		margin:0px!important;
+		margin-top:-10px!important;
+	}
+	.form-horizoontal .chosen-container{
+		margin-left:-13px!important;
+	}
+	.checkbox {
+		margin-left:-14px!important;
+		margin-top: 0px!important;
+		margin-bottom: 0px!important;
+	}	
+	
+	fieldset.form-step{
+		border-bottom: 1px solid #000;
+	}
+	fieldset.form-block {
+		margin: 0px!important;
+		padding: 0px!important;
+	}
+	
+	legend{    
+		margin: 0px!important;    
+		padding:0px!important;    
+	}		 	
+	
+	label.error{
+		display:none!important;
+	}
+	input, textarea, .chosen-choices {    		
+		margin: 0px!important;    
+		margin-top: 12px!important;    
+		border:none!important;
+	}
+	input[type="checkbox"],input[type="radio"]
+	{
+		display: block!important;		
+	}	
+	
+	#mos-header,#mos_footer,.form-result-m,.top_panel_mpgu,.form-result-back-button{
+		display:none!important;
+	}
+	.print-me{
+			display:block!important;
+	}	
+}

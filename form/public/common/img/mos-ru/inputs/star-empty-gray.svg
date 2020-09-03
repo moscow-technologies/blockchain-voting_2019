@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="16px" height="15px" viewBox="0 0 16 15" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: sketchtool 50.2 (55047) - http://www.bohemiancoding.com/sketch -->
+    <title>2DE670D8-77E3-479F-A458-B249E435FB14</title>
+    <desc>Created with sketchtool.</desc>
+    <defs></defs>
+    <g id="ui-kit" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="0060-Style---Icons" transform="translate(-714.000000, -899.000000)" stroke="#9EA4AC" stroke-width="1.25">
+            <g id="Input" transform="translate(80.000000, 842.000000)">
+                <g id="ui/el/icon-star-empty-gray" transform="translate(632.000000, 52.000000)">
+                    <path d="M13.8764447,18.3354684 L13.1480377,14.0228594 L16.2722192,10.9620324 L11.9455943,10.3221192 L10,6.4049984 L8.05440572,10.3221192 L3.72778075,10.9620324 L6.85196233,14.0228594 L6.12355532,18.3354684 L10,16.3100427 L13.8764447,18.3354684 Z" id="Star"></path>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>

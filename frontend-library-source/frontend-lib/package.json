@@ -1,0 +1,10 @@
+{
+  "name": "frontend-lib",
+  "version": "0.0.0",
+  "main": "src/index.js",
+  "dependencies": {
+    "@babel/runtime-corejs3": "^7.8.4",
+    "blockchain-connector": "0.0.0",
+    "crypto-lib": "0.0.0"
+  }
+}

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="18px" height="18px" viewBox="0 0 18 18" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: sketchtool 50.2 (55047) - http://www.bohemiancoding.com/sketch -->
+    <title>DFDF60BF-F963-4B1A-BFB1-6E3247ABFBCD</title>
+    <desc>Created with sketchtool.</desc>
+    <defs></defs>
+    <g id="ui-kit" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="0060-Style---Icons" transform="translate(-600.000000, -897.000000)">
+            <g id="Input" transform="translate(80.000000, 842.000000)">
+                <g id="ui/el/icon-help" transform="translate(520.000000, 48.000000)">
+                    <rect id="24x24" x="0" y="4" width="24" height="24"></rect>
+                    <g id="Group" stroke-width="1" fill-rule="evenodd" transform="translate(0.000000, 7.000000)">
+                        <circle id="Oval" stroke="#D6DAE0" stroke-width="1.25" cx="9" cy="9" r="8.375"></circle>
+                        <g id="ui/help/icon/help" transform="translate(6.000000, 2.000000)" fill="#333333">
+                            <path d="M3.132,8.65 C2.698,8.398 2.306,8.006 2.306,7.404 C2.292,6.704 2.838,6.13 3.328,5.584 C3.734,5.122 4.098,4.688 4.098,4.212 C4.098,3.68 3.65,3.26 2.978,3.26 C2.306,3.26 1.774,3.61 1.396,4.002 L0.5,3.106 C1.088,2.476 1.928,2 3.076,2 C4.504,2 5.554,2.924 5.554,4.1 C5.554,5.136 4.868,5.822 4.336,6.41 C4,6.788 3.706,7.124 3.706,7.362 C3.706,7.544 3.832,7.684 3.972,7.81 L3.132,8.65 Z M3.25,12 C2.69771525,12 2.25,11.5522847 2.25,11 C2.25,10.4477153 2.69771525,10 3.25,10 C3.80228475,10 4.25,10.4477153 4.25,11 C4.25,11.5522847 3.80228475,12 3.25,12 Z" id="?"></path>
+                        </g>
+                    </g>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>

@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="64px" height="64px" viewBox="0 0 64 64" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: sketchtool 55.2 (78181) - https://sketchapp.com -->
+    <title>92D30BCA-5668-47FB-9793-D3514C6CA0EC</title>
+    <desc>Created with sketchtool.</desc>
+    <g id="ui-kit" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="0060-Style---Icons" transform="translate(-80.000000, -1238.000000)" stroke="#CC2222" stroke-width="3.25">
+            <g id="icon/Result/Form/Error" transform="translate(80.000000, 1238.000000)">
+                <circle id="Oval" cx="32" cy="32" r="30.375"></circle>
+                <g id="Group" transform="translate(19.000000, 19.000000)" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M0.928571429,0.928571429 L25.0714286,25.0714286" id="Line"></path>
+                    <path d="M25.0714286,0.928571429 L0.928571429,25.0714286" id="Line"></path>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>

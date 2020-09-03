@@ -1,0 +1,15 @@
+module.exports = {
+  AuthorNotAuthorized: 0,
+  FailedToCreateVoting: 1,
+  VotingDoesNotExist: 2,
+  ForbiddenForThisVotingState: 3,
+  ParticipationCannotBeRevoked: 4,
+  BallotCannotBeIssued: 5,
+  BallotCannotBeStored: 6,
+  DecryptionKeyIsAlreadyPublished: 7,
+  DecryptionKeyIsNotPublished: 8,
+  BallotCannotBeDecrypted: 9,
+  IncorrectPrivateKey: 10,
+  DecryptionIsNotFinished: 11,
+  BallotDoesNotExist: 12,
+};

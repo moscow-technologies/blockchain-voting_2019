@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="18px" height="18px" viewBox="0 0 18 18" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: sketchtool 58 (101010) - https://sketch.com -->
+    <title>88734C37-998F-4FD9-B168-C2AAC28DFE08</title>
+    <desc>Created with sketchtool.</desc>
+    <g id="ui-kit" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="0060-Style---Icons" transform="translate(-164.000000, -1424.000000)" stroke="#9EA4AC" stroke-width="2.25">
+            <g id="item/form/icon/mobile/final-not-ready" transform="translate(161.000000, 1422.000000)">
+                <g id="icon" transform="translate(3.000000, 2.000000)">
+                    <path d="M1.57510647,5.41197213 C1.29729978,5.56628825 1.125,5.85909493 1.125,6.17688421 L1.125,16 C1.125,16.4832492 1.51675084,16.875 2,16.875 L16,16.875 C16.4832492,16.875 16.875,16.4832492 16.875,16 L16.875,6.17672918 C16.875,5.85897598 16.702739,5.56619662 16.4249816,5.41186603 L9.42607058,1.52305467 C9.16180931,1.37622294 8.84047361,1.37620443 8.57619544,1.52300573 L1.57510647,5.41197213 Z" id="Rectangle"></path>
+                    <polyline id="Path-2" stroke-linecap="round" stroke-linejoin="round" points="2 7 9 11 16 7"></polyline>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>

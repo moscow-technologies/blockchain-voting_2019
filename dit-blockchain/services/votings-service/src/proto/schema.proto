@@ -1,0 +1,65 @@
+syntax = "proto3";
+
+package votings_service;
+
+import "helpers.proto";
+import "types.proto";
+import "enums.proto";
+
+message CryptoSystemSettings {
+  votings_service.SealedBoxPublicKey public_key = 1;
+  votings_service.SealedBoxSecretKey private_key = 2;
+}
+
+message BallotConfig {
+  uint32 district_id = 1;
+  string question = 2;
+  map<uint32, string> options = 3;
+  uint32 min_choices = 4;
+  uint32 max_choices = 5;
+}
+
+message Voting {
+  string voting_id = 1;
+  CryptoSystemSettings crypto_system = 2;
+  map<uint32, BallotConfig> ballots_config = 3;
+  VotingState state = 4;
+}
+
+message Voter {
+  string voter_id = 1;
+  bool is_participation_revoked = 2;
+  uint32 ballot_issuing_district = 3;
+}
+
+message Choices {
+  repeated uint32 data = 1;
+}
+
+message EncryptedChoice {
+  bytes encrypted_message = 1;
+  votings_service.SealedBoxNonce nonce = 2;
+  votings_service.SealedBoxPublicKey public_key = 3;
+}
+
+message Ballot {
+  uint32 index = 1;
+  exonum.PublicKey voter = 2;
+  uint32 district_id = 3;
+  EncryptedChoice encrypted_choice = 4;
+  repeated uint32 decrypted_choices = 5;
+  exonum.Hash store_tx_hash = 6;
+  exonum.Hash decrypt_tx_hash = 7;
+  bool invalid = 8;
+}
+
+message DecryptionStatistics {
+  uint32 decrypted_ballots_amount = 1;
+  uint32 invalid_ballots_amount = 2;
+}
+
+message VotingResults {
+  uint32 district_id = 1;
+  map<uint32, uint32> tally = 2;
+  uint32 invalid_ballots_amount = 3;
+}

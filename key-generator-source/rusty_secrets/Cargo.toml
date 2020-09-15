@@ -1,0 +1,69 @@
+[package]
+name = "rusty_secrets"
+version = "0.2.3-pre"
+authors = [
+  "Frederic Jacobs <github@fredericjacobs.com>",
+  "Romain Ruetschi <romain.ruetschi@gmail.com>",
+  "Dylan Bourgeois <dtsbourg@gmail.com>",
+  "Noah Vesely <fowlslegs@riseup.net>",
+  "sellibitze"
+]
+description = "Implementation of threshold Shamir's secret sharing in the Rust programming language."
+homepage = "https://github.com/freedomofpress/RustySecrets"
+license = "BSD-3-Clause"
+readme = "README.md"
+build = "build.rs"
+
+exclude = ["Cargo.lock"]
+
+[badges]
+travis-ci = { repository = "SpinResearch/RustySecrets", branch = "master" }
+coveralls = { repository = "SpinResearch/RustySecrets", branch = "master", service = "github" }
+
+[features]
+default = []
+dss = []
+
+[dependencies]
+base64 = "0.9.0"
+rand = "^0.4.2"
+ring = "^0.16"
+merkle_sigs = "^1.7"
+protobuf = ">= 1.4, < 1.6"
+
+[dependencies.error-chain]
+version = "0.11.0"
+default-features = false
+
+[dev-dependencies]
+itertools = "^0.7"
+quickcheck = "^0.4"
+flate2 = "^0.2"
+rand = "^0.4.2"
+
+[profile.bench]
+opt-level = 3
+debug = false
+rpath = false
+lto = true
+debug-assertions = false
+codegen-units = 1
+
+[profile.release]
+opt-level = 3
+debug = false
+rpath = false
+lto = true
+debug-assertions = false
+codegen-units = 1
+
+[package.metadata.release]
+sign-commit = true
+upload-doc = true
+doc-branch = "gh-pages"
+pre-release-commit-message = "Release version {{version}}."
+pro-release-commit-message = "Start next development iteration {{version}}."
+tag-prefix = "v"
+tag-message = "Release version {{version}}."
+doc-commit-message = "Update documentation."
+dev-version-ext = "pre"

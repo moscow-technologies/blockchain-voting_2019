@@ -1,0 +1,70 @@
+# Rusty Secrets
+
+## Note
+This is custom build with updated dependencies (rand 0.12 is not available)
+
+[![Build Status](https://travis-ci.org/SpinResearch/RustySecrets.svg?branch=master)](https://travis-ci.org/SpinResearch/RustySecrets)
+[![Coverage Status](https://coveralls.io/repos/github/SpinResearch/RustySecrets/badge.svg?branch=master)](https://coveralls.io/github/SpinResearch/RustySecrets?branch=master)
+[![Crates.io](https://img.shields.io/crates/v/rusty_secrets.svg)](https://crates.io/crates/rusty_secrets)
+[![LICENSE](https://img.shields.io/crates/l/rusty_secrets.svg)](https://github.com/SpinResearch/RustySecrets/blob/master/LICENSE)
+
+> Rusty Secrets is an implementation of a threshold [Shamir's secret sharing scheme](https://en.wikipedia.org/wiki/Shamir%27s_Secret_Sharing).
+
+[**Documentation (latest)**](https://docs.rs/rusty_secrets/)  
+[**Documentation (master)**](http://spinresearch.github.io/RustySecrets/rusty_secrets/index.html)
+
+## Design goals
+
+The main use for this library is to split a secret of an arbitrary length in *n* different shares and *k*-out-of-*n* shares are required to recover it. The dealer is assumed to be honest (and competent). We further assume that our adversary will only be able to compromise at most *k-1* shares. Shares are kept offline.
+
+A typical use case for this library would be splitting an encryption key to a TrueCrypt-like volume.
+
+## Implementation
+
+### Structure of the shares
+
+```
+  2-1-LiTyeXwEP71IUA
+  ^ ^ ^^^^^^^^^^^^^^
+  K N        D        
+```
+
+A share is built out of three parts separated with a dash: K-N-D.
+
+- K specifies the number of shares necessary to recover the secret.
+- N is the identifier of the share and varies between 1 and *n* where *n* is the total number of generated shares.
+- The D part is a Base64 encoding of a `ShareData` protobuf containing information about the share, and if signed, the signature.
+
+### Signatures
+
+There are a few issues with regular Shamir's secret sharing that we wanted to address:
+
+- a share can be corrupted or incorrectly entered. 
+- a malicious share holder can modify the secret that would be recovered by modifying his share.
+- a user has multiple shares from different secret shares and he doesn't know which one belongs to a specific instance.
+
+All of these issues would result in a corrupted secret being outputted and the program, that wouldn't even know that the secret got corrupted, wouldn't be able to give any actionable information.
+
+We addressed this by signing the shares by the dealer and encoding the public key into each share. After the generation of the shares, the dealer erases both the secret and the private signing key used to sign the shares. When recovering the secret, the program verifies that public keys and if some shares do not have the same public key, or a valid signature of that public key, signals the issue to the user with a helpful message.
+
+Signing shares is optional and the usefulness of signing the shares depends on the use case. Since we're using hash-based signatures (using SHA-512 Merkle signing), there is a large overhead from using signatures.
+
+## Bug Reporting
+
+Please report bugs either as pull requests or as issues in [the issue
+tracker](https://github.com/SpinResearch/RustySecrets/issues). *RustySecrets* has a
+**full disclosure** vulnerability policy. **Please do NOT attempt to report
+any security vulnerability in this code privately to anybody.**
+
+## License
+
+RustySecrets is distributed under the BSD 3-Clause license. See the [LICENSE](LICENSE) file for more information.
+
+## Vocabulary
+
+- Dealer: Entity that will perform key splitting from a master secret
+- Shares: Part of the split secret distributed
+
+## Credits
+
+Rusty Secrets was forked off [sellibitze's secretshare.](https://github.com/sellibitze/secretshare)

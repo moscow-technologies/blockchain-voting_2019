@@ -1,0 +1,16 @@
+[package]
+name = "key-generator"
+version = "1.0.0"
+authors = []
+edition = "2018"
+
+[dependencies]
+clap = "2.33.0"
+exonum_sodiumoxide = "0.0.22"
+hex = "0.3.2"
+rusty_secrets = { path = "./rusty_secrets" }
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+
+[profile.release]
+lto = true

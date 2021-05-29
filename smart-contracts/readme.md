@@ -6,6 +6,11 @@ Contents of ./packages folder are:
 - `smart-contracts` - smart contracts code & compiled abi & binaries
 - `voting-lib` - javascript bindings for smart contacts based on ethers.js
 
+## Build-dependencies
+
+* [nodejs](https://nodejs.org/en/download/package-manager/)
+* [yarn](https://yarnpkg.com/lang/en/docs/install/)
+
 ## Building
 First run `npm install` to install lerna, then run `./node_modules/.bin/lerna bootstrap`
 to install packages dependencies.
